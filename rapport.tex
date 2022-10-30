@@ -1,0 +1,90 @@
+\documentclass[10pt, a4paper]{article}
+
+\input{includes}
+
+\title{Rapport}
+\author{GOEDEFROIT Charles}
+\subject{Sur l'article : Arbitration Policies for On-Demand User-Level I/O Forwarding on HPC Platforms}
+\keywords{}
+\date{\today}
+
+\input{configs}
+
+\begin{document}
+
+\begin{titlepage}
+	\centering
+  \ {} % important
+	\vfill
+	\vspace{1cm}
+	{\scshape\Huge\MyTitle\par}
+	\vspace{0.5cm}
+	{\Large\MySubject\par}
+	\vspace{1cm}
+	\MyAuthor
+	\vfill
+	{\large\MyDate\par}
+\end{titlepage}
+
+\newpage
+
+
+\section{L'objectif de l'article}
+% TODO: the objective of the paper;
+
+L'article s'intéresse à différante politique d'accés au noeux de données en fonction des
+patternes d'accès au données par l'applicaiton.
+
+L'article propose une politique basé sur le problème du sac à dos (Knapsack problem) à choix
+multiple. Ce problem cherche à maximisé la bandpassat global en donnant plus de noeux I/O au
+applications qui en on le plus besoin.
+
+Il propose aussi une solution qui permet d'utilisé, à la demande, au niveaux utilisateur et
+pandent l'execution, différantes politiques de \emph{I/O forwarding}.
+
+Il montre que leur technique augment de façon transparent l'utilisation de la bande passante
+globale jusque'à 85\% par rapport a la politique statique utilisé par défault. Il le montre
+avec de nombreuse expérimentations et directement sur une infrastructure (live setup).
+
+
+
+\section{Le context de l'article}
+% - its scientific context or the background to understand the work;
+
+Le \emph{I|O forwarding} est une technique très utilisé dans le HPC. Cette technique permet
+d'augmenté les performance, en diminuent la contention, d'accès au serveurs de stockage de
+données tous en étant transparent pour l'utilisateur.
+
+évite les accé dirrect au machine de stockage paralléle
+
+Le \emph{I|O forwarding} consiste à une groupe de noeux qui resoive les requétes de
+l'applicaiton et les transmet au system de fichier paralléle. Permet aussi de changer la form
+des requétes (Ex : au lieu de plusieurs petite requétes on en fait une seul grand).
+
+La technique habituelle est d'assigné statiquement un noeux de stockage à un noeux de calcule.
+Ces liens ce correspond pas tous le temps au transfére de données d'on l'appication à besoin.
+Cette technique amméne à une mauvaise utilisation des resources.
+
+
+\section{The problem}
+% - a vision of the problem being treated (types of tasks and resources, objective function, constraints, etc), if possible;
+
+\section{Explication des algo}
+% - an explanation of the algorithms;
+
+
+\section{Le perfs}
+% - commentary regarding the performance evaluation, if present;
+
+
+\section{Les autre publications}
+% - information about other papers that reference it.
+
+
+\section{Definition *}
+
+La \emph{contention} : forte tentions sur un serveur (beaucoup de demandes).
+
+\end{document}
+
+% TODO: up to 8 pages

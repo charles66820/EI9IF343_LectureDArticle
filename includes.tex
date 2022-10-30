@@ -1,0 +1,85 @@
+% Text packages
+\usepackage[french]{babel}
+\usepackage[utf8x]{inputenc} % fix text encode to the final document
+\usepackage{xspace} % fix spaces problems
+% \usepackage{lmodern} % Latin founts, can be useful?
+
+% Fonts packages
+\usepackage{ifxetex}
+\ifxetex
+    \usepackage{fontspec}
+    \setmainfont{OpenDyslexic}
+    [
+      BoldFont=OpenDyslexic-Bold,
+      ItalicFont=OpenDyslexic-Italic,
+      BoldItalicFont=OpenDyslexic-BoldItalic,
+      SmallCapsFont=OpenDyslexicMono
+    ]
+    \setsansfont{OpenDyslexic}[
+      Scale=MatchLowercase,
+      BoldFont=OpenDyslexic-Bold,
+      ItalicFont=OpenDyslexic-Italic,
+      BoldItalicFont=OpenDyslexic-BoldItalic,
+      SmallCapsFont=OpenDyslexicMono
+    ]
+    \setmonofont{OpenDyslexicMono}[
+      Scale=MatchLowercase,
+      BoldFont=OpenDyslexic-Bold,
+      ItalicFont=OpenDyslexic-Italic,
+      BoldItalicFont=OpenDyslexic-BoldItalic,
+      SmallCapsFont=OpenDyslexicMono
+    ]
+\else
+    \usepackage[T1]{fontenc}
+\fi
+
+% Math fonts
+\usepackage{amsmath, amsfonts} % amssymb %INFO: amsmath < mathtools
+\usepackage{latexsym}
+
+% Theorem fonts
+\usepackage{amsthm}
+
+% Title import
+\usepackage{authoraftertitle}
+
+% Date time
+\usepackage{datetime}
+
+% Clickable link
+\usepackage{hyperref}
+\usepackage{bookmark}
+
+% Image
+\usepackage{graphicx}
+\usepackage{subcaption} % Image side by side
+
+% Import table
+\usepackage{tabularx}
+\usepackage{multirow} % merge rows
+\usepackage{multicol} % merge columns
+\usepackage[table]{xcolor}
+\usepackage{longtable} % Allow tables to occupy several pages
+\usepackage{array} % For table and array format
+
+\usepackage{float} % For floating objects position lik figures or tables
+
+% Text color
+\usepackage{xcolor}
+
+% Custom titles
+% \usepackage{titlesec}
+
+% Code import
+% \usepackage{lstlisting}
+
+% Graphviz import
+% \usepackage[pdf]{graphviz}
+
+% Page geometry (landscape...)
+% \usepackage[driver=pdftex]{geometry}
+% \usepackage{lscape}
+
+% \usepackage{lipsum} % lorem ipsum
+
+\usepackage{magictex}
