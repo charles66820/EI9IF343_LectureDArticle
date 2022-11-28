@@ -58,8 +58,16 @@ Le context de l'article est :
 - le \emph{I|O forwarding} cherche a corriger le problème en diminuent le nombre de machine qui accéde au PFS.
 
 
+La technique habituelle est d'assigné statiquement un noeux de stockage à un noeux de calcule.
+Ces liens ce correspond pas tous le temps au transfére de données d'on l'appication à besoin.
+Cette technique amméne à une mauvaise utilisation des resources.
+
 % NInt : noeux interface
 % Ncal : noeux de calcule
+
+Le \emph{I|O forwarding} consiste à une groupe de noeux qui resoive les requétes de
+l'applicaiton et les transmet au system de fichier paralléle. Permet aussi de changer la form
+des requétes (Ex : au lieu de plusieurs petite requétes on en fait une seul grand).
 
 Le \emph{I|O forwarding} :
 - une technique très utilisé dans le HPC
@@ -70,7 +78,47 @@ Le \emph{I|O forwarding} :
 - c'est transparent pour les utilisateurs (app, FS...)
 - diminuent la contention à accès au serveurs de stockage de données.
 - try to répatition uniform ?
+- utilisé par des machine du top 500
+- 
+
+
+les théchniques d'optimisation :
+- la planification des demandes
+- l'agrégation des demandes.
 -
+
+
+Le papier parle de :
+- regarde plusieurs politique de répartition des resources en fonction des patternes d'accées au données.
+- comparé différant patterns d'accées pour mieux voir les benefices et désavantages
+- 
+
+Contributions :
+1. Le papier évaluons plusieurs politiques d'allocation \emph{I/O forwarding} => démontre que l'allocation dynamique peut amélioré l'utilisation de la bande passante et l'utilisation des noeux I/O.
+
+2. Une politique d'allocation basé sur \emph{Multiple-Choice Knapsack Problem} (\textbf{MCKP}) pour la réprtition des noeux I/O aux app.
+
+3. Il propose un service \emph{I/O forwarding} appelé \emph{GekkoFWD} qui implémente la politique \textbf{MCKP}. on-demand, au user-level, sans modif du code, simple à déployé, utilise sont propre fs.
+Ce fs est enrichi pour perpètre différant déploiement??.
+
+Le papier plaide pour :
+- allocation dynamique des noeux I/O par rapport au type de calculs / patternes des applicaiton
+- repartire des applications sur plusieur reources pour maximisé l'utilisation de la bande passante.
+- Le changement de politique ce fait au démmarrage ou au changement des applications (job) lancé.
+- 
+
+1. maximize la band passante en donnant des noeux de stockage au application qui vont mieux les utilisé. (et pas au applications qui accéde peut au données?).
+
+propose : (user-level + portable + don't edit apps => solution utile)
+- user-level i/o solution
+- on demand
+- applique différante politique d'allocation a l'execution (dynamique)
+- changer le nombre de noeux I/O à l'execution sans perturbé l'app
+-
+
+\section{The problem}
+% - a vision of the problem being treated (types of tasks and resources, objective function, constraints, etc), if possible;
+
 
 Le pb :
 - la connection entre les NInt et les Ncal est statique
@@ -80,44 +128,7 @@ Le pb :
 - La bande passant est déterminé par le fonctionnement des applications (plus ou moins de calcule avec plus ou moins d'accés au données...) ce qui fait qu'avec un nombre statique de noeux ou peut ce retouvé à avoir top de noeux I/O et donc une bande passant pas utilisé a sont pliens potenciel. (caractéristiques de la charge de travail / accès I/O).
 - 
 
-les théchniques d'optimisation :
-- la planification des demandes
-- l'agrégation des demandes.
--
-
-Le \emph{I|O forwarding} consiste à une groupe de noeux qui resoive les requétes de
-l'applicaiton et les transmet au system de fichier paralléle. Permet aussi de changer la form
-des requétes (Ex : au lieu de plusieurs petite requétes on en fait une seul grand).
-
-La technique habituelle est d'assigné statiquement un noeux de stockage à un noeux de calcule.
-Ces liens ce correspond pas tous le temps au transfére de données d'on l'appication à besoin.
-Cette technique amméne à une mauvaise utilisation des resources.
-
-Le papier parle de :
-- regarde plusieur politique de répartition des resources en fonction des patternes d'accées au données.
-- 
-
-Le papier plaide pour :
-- allocation dynamique des noeux I/O par rapport au type de calculs / patternes des applicaiton
-- repartire des applications sur plusieur reources pour maximisé l'utilisation de la bande passante.
-- Le changement de politique ce fait au démmarrage ou au changement des applications (job) lancé.
-- 
-
-Les politiques proposé sont :
-1. une basé sur Multiple-Choice Knapsack problem
-
-
-1. maximize la band passante en donnant des noeux de stockage au application qui vont mieux les utilisé. (et pas au applications qui accéde peut au données?).
-
-propose :
-- user-level i/o solution
-- on demand
-- applique différante politique d'allocation a l'execution
-- 
-
-
-\section{The problem}
-% - a vision of the problem being treated (types of tasks and resources, objective function, constraints, etc), if possible;
+- pas facile de changer la strategies sans avoir un mauvé impacte car statique
 
 \section{Explication des algo}
 % - an explanation of the algorithms;
