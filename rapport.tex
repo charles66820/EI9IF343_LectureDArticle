@@ -106,7 +106,7 @@ Ce fs est enrichi pour perpètre différant déploiement??.
 Le papier plaide pour :
 - allocation dynamique des noeux I/O par rapport au type de calculs / patternes des applicaiton
 - repartire des applications sur plusieur reources pour maximisé l'utilisation de la bande passante.
-- Le changement de politique ce fait au démmarrage ou au changement des applications (job) lancé.
+- Le changement de politique ce fait au démarrage ou au changement des applications (job) lancé. (pour déterminé le mailleur nb de I/O forwarding nodes)
 - 
 
 1. maximize la band passante en donnant des noeux de stockage au application qui vont mieux les utilisé. (et pas au applications qui accéde peut au données?).
@@ -133,6 +133,29 @@ Le pb :
 - pas facile de changer la strategies sans avoir un mauvé impacte car statique
 
 Il on en premier regardé que toutes les applications n'on pas les même perf avec le même nombre de I/O nodes. Il on vue que certain patternes on besoin de plus de I/O nodes et d'autre moins. Donc il on montré qu'une allocation statique c'est null.
+
+Pour un ensemble de tâches à exécuter et un nombre fixe de de nœuds I/O il faut déterminé le nombre de noeux I/O forwarding qui maximise l'utilisation de la bande passante globale. Ce probléme dois étre considered as an optimization problem.
+
+MCKP :
+- un problème d'optimisation
+- derived from the 0-1 Knapsack
+- items divide in $k$ classes of $N_i$ items
+($N$ = ensemble des nombre d'items par classes)
+$Items = {a; b; c; d; e; f; g}, k <- 2, Items/k = C <- {{a; b; c}; {d; e; f; g}},$
+$card(C_1) = 3 = N_1, card(C_2) = 3 = N_2$
+- $x_{ij} = 1$ ssi item $j$ is chosen in class $N_i$
+- $w_i$ is the weight for the iéme items that represent number of I/O nodes.
+- $W$ the total number of I/O nodes.
+- $p_i$ is the bandwidth.
+
+- problem is NP-hard
+- la solution es obtenu par "Dynamic Programming" qui a une complexité en temps pseudo-polynomial ($O(W\sum^{k}_{i=1}N_i)$)
+
+
+compute nodes must be derived by the number of I/O nodes.
+on est limité par le nombre total de noeux I/O.
+
+TODO: We assume that
 
 \section{Explication des algo}
 % - an explanation of the algorithms;
