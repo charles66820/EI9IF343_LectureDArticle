@@ -47,9 +47,6 @@ globale jusque'à 85\% par rapport a la politique statique utilisé par défault
 avec de nombreuse expérimentations et directement sur une infrastructure (live setup).
 
 
-% TODO: SECTION 3.
-
-
 \section{Le context de l'article}
 % - its scientific context or the background to understand the work;
 
@@ -175,8 +172,34 @@ La band passante de chaque groupe est calculé par la somme de toutes les (Write
 
 \section{Explication des algo}
 % - an explanation of the algorithms;
+Gekkofwd :
+- politique d'allocation de noeux I/O.
+- 
 
-TODO: SECTION 4.
+GekkoFS :
+- Un system de fichier local au noeux de calcule
+- Un \emph{burst-buffer} qui est un buffer qui ce met entre l'app et le FS pour amélioré les perfs. Ce gain de perf est obtenu car il augmente l'utilisation de la band passante (en permettant le stockage de données en même temps que le calcule) et permet d'attenué la charge sur le PFS quant il y à un peaks de demande.
+- Fourni un system de nom qui est partagé entre tous les noeux de calcule. Ce mecanisme peut être remplacé par un PFS (grâce au mode d'extension GekkoFWD).
+- 
+
+Grâce à GekkoFWD, GekkoFS est utilisé comme un noeux intermédiaires entre le noeux de calcule et le noeux I/O.
+
+Pour capturé les requêtes de l'app au PFS de façon transparent GekkoFS utilise intércepte les appéles system.
+
+Une fois les requêtes capturé GekkoFWD transfére les requêtes à un seul serveur qui lui vas appliqué la politique d'allocation voulue.
+
+Grâce à GekkoFS ils on donc ajouté un thread qui check si le mappage à changer.
+
+Ce système transparent permet de d'ajouté des optiminsation comme la planification des demandes au niveau des fichiers donc il on ajouté la bibliothèque AGIOS dans GekkoFWD.
+
+AGIOS :
+- fourni plusieurs ordonanceur.
+
+AGIOS permet à GekkoFWD d'utilisé différant ordonanceur.
+
+Quand un noeux I/O resoive les requêtes il les envoi à AGIOS pour ordonancé le moment ou elle seront traité.
+
+Une fois fini tous est envoyer au PFS.
 
 \section{Le perfs}
 % - commentary regarding the performance evaluation, if present;
@@ -199,7 +222,20 @@ Politiques avec les quelle il ce sont comparer :
 - \emph{SIZE and PROCESS Policies}
 - \emph{ORACLE Policy}
 
-TODO: SECTION 5.
+
+Ils on fait les expérimentations sur la platform Grid 5000 (G5K) avec 2 cluster à Nancy : Grimoire (8 noeux) et Gros (124 noeux). % conf
+
+5 différants app kernels + les micro-benchmark IOR :
+1. S3D I/O Kernel
+2. MADBench2
+3. HACC-IO
+4. S3aSim
+5. NAS BT-IO
+
+Ils on mesuré la band passant pour chaque applications et il confirm les résultat de FORGE. Ils ont fait ce test avec des nombre de noeux et des nombre de processus différant.
+
+TODO: 5.2. Allocation Decisions
+
 
 \section{Les autre publications}
 % - information about other papers that reference it.
