@@ -155,7 +155,23 @@ $card(C_1) = 3 = N_1, card(C_2) = 3 = N_2$
 compute nodes must be derived by the number of I/O nodes.
 on est limité par le nombre total de noeux I/O.
 
-TODO: We assume that
+Il on fait des traces pour connaitre les access patterns (total data volum, nb processes makeing I/O requests...)
+
+Il on fait des petit benchmark pour reproduire les patternes et cfaire des teste de perfs.
+
+Pas besoin de profiling car on regarde juste les politique d'allocation.
+
+Ils executé 189 patterns sur la machine MN4.
+Ils on fait des groupe de 16 pour simulé chaque politique.
+
+1 pattern = one app for this test.
+
+Il on généré 10 000 groupe de 16 pattern qui prènne le même temps d'execution.
+Jusque à 128 I/O forwarding nodes. (128 / 16app = 8 by app)
+Number of compute nodes : median 256, minimum 88, maximum 512.
+
+La band passante de chaque groupe est calculé par la somme de toutes les (WriteSize + ReadSize / runningTime)
+\begin{equation*}aggregate\ BW=\sum_{a=1}^{16}\left(\frac{W_{a}+R_{a}}{runtime_{a}}\right) \tag{2}\end{equation*}
 
 \section{Explication des algo}
 % - an explanation of the algorithms;
@@ -177,6 +193,11 @@ Pour les perfs du début ils on :
 - il décrive les machines de MN4
 - 
 
+Politiques avec les quelle il ce sont comparer :
+- \emph{ZERO and ONE Policies}
+- \emph{STATIC Policy}
+- \emph{SIZE and PROCESS Policies}
+- \emph{ORACLE Policy}
 
 TODO: SECTION 5.
 
