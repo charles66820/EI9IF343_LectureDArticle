@@ -234,6 +234,14 @@ Ils on fait les expérimentations sur la platform Grid 5000 (G5K) avec 2 cluster
 
 Ils on mesuré la band passant pour chaque applications et il confirm les résultat de FORGE. Ils ont fait ce test avec des nombre de noeux et des nombre de processus différant.
 
+set of jobs composed of BT-C, BT-D, IOR-MPI, POSIX-L, MAD, and S3D to test dynamically changing the allocated I/O nodes
+
+il svois que c'est pas ouf l'accés statique sauf pour S3D. Distribution non optimal. On vois que IOR-MPI pourrai être mailler avec plus d'un I/O forwarding nodes.
+
+une tache de chaque app : HACC, IOR-MPI, SIM, IOR-MPI, IOR-MPI, POSIX-S, POSIX-L, BT-C, MAD, MAD, S3D, HACC, HACC, and BT-D. Figure 9 on voi les gains.
+
+
+
 TODO: 5.2. Allocation Decisions
 
 
