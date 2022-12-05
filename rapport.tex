@@ -61,7 +61,7 @@ Pour répondre au besoin de pussiance croissante on augmente le nombre de noeud 
 
 Cette technique est très utilisé pour le calcul haut performance, notamment par des machine du top 500\cite{}. Elle permet d'augmenté les performances global en diminuent la concentration des requêtes sur les \emph{noeud I/O}. Pour cela elle évite les accès direct aux \emph{noeud I/O} en ce placent entre les noeud de calcule et les \emph{noeud I/O}. Concrètement un groupe de \emph{noeud I/O} recevoir les requêtes et applique des traitement avant de les transmet au bon \emph{noeud I/O}. Ce technique est transparent pour les utilisateurs, elle cherche à appliqué une répartition uniforme entre les noeud et permet le controlle des demandes d'accès au données ce qui permet l'application de technique d'optimisation. Ce techniques peuvent être de différentes nature comme l'agrégation des requêtes (en combinent plusieurs petite requêtes) ou la planification des requêtes.
 
-Habituellement les \emph{noeud I/O} qui s'occupe de la réception des requêtes sont assigné statiquement à un noeud de calcule et celle-ci peut dépendre de la topologie du réseau, du nombre de \emph{noeud I/O}\dots Cette assignation ne correspond pas tous les temps au besoin de l'application qui peut ne pas utilisé toute la bande passant ou être ralentie par celle-ci. L'assignation statiquement amène donc à une mauvaise utilisation des resources.
+Habituellement les \emph{noeud I/O} qui s'occupe de la réception des requêtes sont assigné statiquement à un noeud de calcule et celle-ci peut dépendre de la topologie du réseau, du nombre de \emph{noeud I/O}\dots Cette assignation ne correspond pas tous les temps au besoin de l'application qui peut ne pas utilisé toute la bande passant ou être ralentie par celle-ci. L'assignation statiquement amène donc à une mauvaise utilisation des resources. Dans la suite du rapport j'appelerai les \emph{noeud I/O} qui s'occupe de la réception les \emph{noeud I/O Forwarding}.
 
 \section{Le problème traité par l'article}
 
@@ -90,19 +90,58 @@ Il on effectué ces évaluations en faisant plusieurs lancements avec différent
 Grâce à cette évaluations on vois qu'il est possible d'amélioré l'utilisation de la band passante.
 Ils ont aussi vue que toutes les applications n'on pas les même performances avec le même nombre de \emph{noeud I/O}. Cette différence existe car chaque applications a un patterns d'accès aux \emph{PFS} différent. Ils ont remarqué que certain applications avait des patterns similaire.
 
+\subsection{TO_NAME}
+
+Les auteurs onr fait des traces pour connaître les patterns d'accès des application au \emph{PFS}. Il on collecté le volume total des données transféré et le nombre de processes qui font des requêtes \emph{I/O}. Avec c'est traces ils on créer des petit benchmark pour reproduire les c'est patterns d'accès et faire des teste de performances.
+
+\section{Propositions de l'article}
+
+La problématique d'une politique d'allocation peut être repésenté comme suit :
+Pour un ensemble de tâches ou job à exécuter et un nombre fixe de \emph{noeud I/O} il faut déterminé le nombre de \emph{noeud I/O Forwarding} qui permet de maximisé l'utilisation de la bande passante globale.
+Cette problématique peut être considéré comme un problème d'optimisation.
+
+Pour répondre à cette problématique et permettre l'allocation dynamique l'article porpose une nouvelle politique d'allocation ainsi qu'un service permettant l'allocation dynamique.
+
+\subsection{La politique d'allocaion basé sur \emph{MCKP}}
+
+La politique d'allocation basé sur \textbf{MCKP} (\emph{Multiple-Choice Knapsack Problem}) cherche la mailleur répartition possible des \emph{noeud I/O Forwarding} aux noeud de calculs.
+Pour cela cette politique cherche à maximisé la band passante global en donnant plus de \emph{noeud I/O Forwarding} au applications qui en on le plus besoin et moins au autre. Ce problème d'optimisation et dérivé du problème \emph{0-1 Knapsack}.
+Pour effectué la maximisation de la band passante l'algorithms vérifie que chaque tâches à bien une taille et que le nombre globale de \emph{noeud I/O Forwarding} calculé ne dépasse pas le nombre de \emph{noeud I/O Forwarding} disponible.
+
+Ce problème fait partie de la classe de complexité en temps \emph{NP-hard} mais une solution peut être obtenu par "Dynamic Programming" qui est en temps \emph{pseudo-polynomial}.
+
+Le nombre de noeud de calcule dois être divisable par le nombre de \emph{noeud I/O Forwarding} pour améliorer l'équilibrage de la charge.
+
+% MCKP :
+% - Ce problem cherche à maximisé la bandpassat global en donnant plus de noeud I/O au applications qui en on le plus besoin.
+% - un problème d'optimisation
+% - derived from the 0-1 Knapsack
+% - items divide in $k$ classes of $N_i$ items
+% ($N$ = ensemble des nombre d'items par classes)
+% $Items = {a; b; c; d; e; f; g}, k <- 2, Items/k = C <- {{a; b; c}; {d; e; f; g}},$
+% $card(C_1) = 3 = N_1, card(C_2) = 3 = N_2$
+% - $x_{ij} = 1$ ssi item $j$ is chosen in class $N_i$
+% - $w_i$ is the weight for the iéme items that represent number of I/O nodes.
+% - $W$ the total number of I/O nodes.
+% - $p_i$ is the bandwidth.
+% - problem is NP-hard
+% - la solution es obtenu par "Dynamic Programming" qui a une complexité en temps pseudo-polynomial ($O(W\sum^{k}_{i=1}N_i)$)
+
+\subsection{Le service permettant l'allocation dynamique (\emph{GekkoFWD})}
+
+L'article propose un service \emph{I/O forwarding} appelé \emph{GekkoFWD} qui
+implémente la politique \textbf{MCKP}. Ce service permet le changement de politiques d'allocation ainsi que le nombre de \emph{noeud I/O Forwarding} à la demande (dynamiquement) sans perturbé l'application. Il fonction au niveau utilisateur, il ne nécessite pas de modification du code des applications et il est simple à déployé. Cette simplicité en fait une solution utilie.
+Ce service est basé sur \emph{GekkoFS} qui est une système de fichier local à un noeud et qui peut ce connecté à la pluspare des \emph{PFS} existant.
+
+
+TODO: continue here
+
 
 Le papier parle de :
 - regarde plusieurs politique de répartition des resources en fonction des patternes d'accées au données.
 - comparé différent patterns d'accées pour mieux voir les benefices et désavantages
 - 
 
-Contributions :
-% 1. Le papier évaluons plusieurs politiques d'allocation \emph{I/O forwarding} => démontre que l'allocation dynamique peut amélioré l'utilisation de la bande passante et l'utilisation des noeud I/O.
-
-2. Une politique d'allocation basé sur \emph{Multiple-Choice Knapsack Problem} (\textbf{MCKP}) pour la réprtition des noeud I/O aux app.
-
-3. Il propose un service \emph{I/O forwarding} appelé \emph{GekkoFWD} qui implémente la politique \textbf{MCKP}. on-demand, au user-level, sans modif du code, simple à déployé, utilise sont propre fs.
-Ce fs est enrichi pour perpètre différent déploiement??.
 
 Le papier plaide pour :
 - allocation dynamique des noeud I/O par rapport au type de calculs / patternes des application
@@ -111,40 +150,6 @@ Le papier plaide pour :
 - 
 
 1. maximize la band passante en donnant des noeud de stockage au application qui vont mieux les utilisé. (et pas au applications qui accéde peut au données?).
-
-propose : (user-level + portable + don't edit apps => solution utile)
-- user-level i/o solution
-- on demand
-- applique différente politique d'allocation a l'execution (dynamique)
-- changer le nombre de noeud I/O à l'execution sans perturbé l'app
--
-
-
-Pour un ensemble de tâches à exécuter et un nombre fixe de de nœuds I/O il faut déterminé le nombre de noeud I/O forwarding qui maximise l'utilisation de la bande passante globale. Ce probléme dois étre considered as an optimization problem.
-
-MCKP :
-- Ce problem cherche à maximisé la bandpassat global en donnant plus de noeud I/O au applications qui en on le plus besoin.
-- un problème d'optimisation
-- derived from the 0-1 Knapsack
-- items divide in $k$ classes of $N_i$ items
-($N$ = ensemble des nombre d'items par classes)
-$Items = {a; b; c; d; e; f; g}, k <- 2, Items/k = C <- {{a; b; c}; {d; e; f; g}},$
-$card(C_1) = 3 = N_1, card(C_2) = 3 = N_2$
-- $x_{ij} = 1$ ssi item $j$ is chosen in class $N_i$
-- $w_i$ is the weight for the iéme items that represent number of I/O nodes.
-- $W$ the total number of I/O nodes.
-- $p_i$ is the bandwidth.
-
-- problem is NP-hard
-- la solution es obtenu par "Dynamic Programming" qui a une complexité en temps pseudo-polynomial ($O(W\sum^{k}_{i=1}N_i)$)
-
-
-compute nodes must be derived by the number of I/O nodes.
-on est limité par le nombre total de noeud I/O.
-
-Il on fait des traces pour connaitre les access patterns (total data volum, nb processes makeing I/O requests...)
-
-Il on fait des petit benchmark pour reproduire les patternes et cfaire des teste de perfs.
 
 Pas besoin de profiling car on regarde juste les politique d'allocation.
 
@@ -180,7 +185,7 @@ Une fois les requêtes capturé GekkoFWD transfére les requêtes à un seul ser
 
 Grâce à GekkoFS ils on donc ajouté un thread qui check si le mappage à changer.
 
-Ce système transparent permet de d'ajouté des optiminsation comme la planification des demandes au niveau des fichiers donc il on ajouté la bibliothèque AGIOS dans GekkoFWD.
+Ce système transparent permet de d'ajouté des optimisation comme la planification des demandes au niveau des fichiers donc il on ajouté la bibliothèque AGIOS dans GekkoFWD.
 
 AGIOS :
 - fourni plusieurs ordonanceur.
@@ -210,7 +215,7 @@ Ils on mesuré la band passant pour chaque applications et il confirm les résul
 
 set of jobs composed of BT-C, BT-D, IOR-MPI, POSIX-L, MAD, and S3D to test dynamically changing the allocated I/O nodes
 
-il svois que c'est pas ouf l'accés statique sauf pour S3D. Distribution non optimal. On vois que IOR-MPI pourrai être mailler avec plus d'un I/O forwarding nodes.
+il svois que c'est pas ouf l'accés statique sauf pour S3D. Distribution non optimal. On vois que IOR-MPI pourrai être mailleur avec plus d'un I/O forwarding nodes.
 
 une tache de chaque app : HACC, IOR-MPI, SIM, IOR-MPI, IOR-MPI, POSIX-S, POSIX-L, BT-C, MAD, MAD, S3D, HACC, HACC, and BT-D. Figure 9 on voi les gains.
 
@@ -293,3 +298,22 @@ La \emph{contention} : forte tentions sur un serveur (beaucoup de demandes).
 % - pas facile de changer la strategies sans avoir un mauvé impacte car statique
 
 % Il on en premier regardé que toutes les applications n'on pas les même perf avec le même nombre de I/O nodes. Il on vue que certain patternes on besoin de plus de I/O nodes et d'autre moins. Donc il on montré qu'une allocation statique c'est null.
+
+% Pour un ensemble de tâches à exécuter et un nombre fixe de de nœuds I/O il faut déterminé le nombre de noeud I/O forwarding qui maximise l'utilisation de la bande passante globale. Ce probléme dois étre considered as an optimization problem.
+
+% Contributions :
+% 1. Le papier évaluons plusieurs politiques d'allocation \emph{I/O forwarding} => démontre que l'allocation dynamique peut amélioré l'utilisation de la bande passante et l'utilisation des noeud I/O.
+
+% 2. Une politique d'allocation basé sur \emph{Multiple-Choice Knapsack Problem} (\textbf{MCKP}) pour la répartition des noeud I/O aux app.
+
+% compute nodes must be divisible by the number of I/O nodes.
+% on est limité par le nombre total de noeud I/O.
+
+% 3. Il propose un service \emph{I/O forwarding} appelé \emph{GekkoFWD} qui implémente la politique \textbf{MCKP}. on-demand, au user-level, sans modif du code, simple à déployé, utilise sont propre fs.
+% Ce fs est enrichi pour perpètre différent déploiement??.
+
+% propose : (user-level + portable + don't edit apps => solution utile)
+% - user-level i/o solution
+% - on demand
+% - applique différente politique d'allocation a l'execution (dynamique)
+% - changer le nombre de noeud I/O à l'execution sans perturbé l'app
