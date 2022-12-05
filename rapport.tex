@@ -131,25 +131,46 @@ Le nombre de noeud de calcule dois être divisable par le nombre de \emph{noeud 
 
 L'article propose un service \emph{I/O forwarding} appelé \emph{GekkoFWD} qui
 implémente la politique \textbf{MCKP}. Ce service permet le changement de politiques d'allocation ainsi que le nombre de \emph{noeud I/O Forwarding} à la demande (dynamiquement) sans perturbé l'application. Il fonction au niveau utilisateur, il ne nécessite pas de modification du code des applications et il est simple à déployé. Cette simplicité en fait une solution utilie.
-Ce service est basé sur \emph{GekkoFS} qui est une système de fichier local à un noeud et qui peut ce connecté à la pluspare des \emph{PFS} existant.
+Ce service est basé sur \emph{GekkoFS} qui est une système de fichier local à un noeud et qui peut ce connecté à la plupart des \emph{PFS} existant.
+
+\subsubsection{\emph{GekkoFS}}
+
+\emph{GekkoFS} est un système de fichiers local qui est exécuter sur les noeud de calcule. Ce système est utilisé comme un \emph{burst-buffer}. Comme sont nom l'indique c'est un buffer qui ce met entre l'application et le \emph{PFS} dans le but d'amélioré la performances des accès \emph{I/O}. Cette amélioration est en partie du à la diminution de la charge sur le \emph{PFS} quant il y a un pics de demande.
+
+Ce système permet aussi l'execution des requêtes \emph{I/O en parallèle} de l'execution du calcule, ce qui permet d'augmente l'utilisation de la band passante.
+
+Il fourni aussi un système de nom qui est partagé entre tous les noeud de calcule. Ce mécanisme peut être remplacé par un \emph{PFS}.
+
+\subsubsection{Application de technique d'optimisation (\emph{AGIOS})}
+
+\emph{GekkoFWD} nous permet d'appliqué des techniques d'optimisation de façon transparente. Pour ce faire ils ont ajouté la bibliothèque \emph{AGIOS} dans \emph{GekkoFWD}. Cette bibliothèque fourni plusieurs algorithms d'ordonnancement.
+\emph{GekkoFWD} peut donc utilisé différent ordonnanceurs sur les requêtes. Ceci permet la planification des requêtes au niveau des données.
+
+\section{Algorithme}
+
+Grâce à \emph{GekkoFWD}, \emph{GekkoFS} est utilisé comme un noeud intermédiaires entre les noeud de calcule et les \emph{noeud I/O}. Pour cela \emph{GekkoFS} capture les requêtes que fait l'application au \emph{PFS}. Cette capture est transparent et ce fait en interceptant les appéles système. Une fois les requêtes capturé \emph{GekkoFWD} transfére les requêtes à un seul serveur qui vas les passé à \emph{AGIOS} pour ordonancé le moment ou elle seront traité. Grâce au requêtes il est possible de determiné quelle politique d'allocation appliqué.
+
+Pour savoir quant le mappage à changer on ajoute un thread grâce à \emph{GekkoFS}.
+
 
 
 TODO: continue here
 
-
 Le papier parle de :
 - regarde plusieurs politique de répartition des resources en fonction des patternes d'accées au données.
 - comparé différent patterns d'accées pour mieux voir les benefices et désavantages
-- 
-
 
 Le papier plaide pour :
 - allocation dynamique des noeud I/O par rapport au type de calculs / patternes des application
 - repartire des applications sur plusieur reources pour maximisé l'utilisation de la bande passante.
 - Le changement de politique ce fait au démarrage ou au changement des applications (job) lancé. (pour déterminé le mailleur nb de I/O forwarding nodes)
-- 
 
 1. maximize la band passante en donnant des noeud de stockage au application qui vont mieux les utilisé. (et pas au applications qui accéde peut au données?).
+
+\section{Les performances}
+
+% NOTE: perfs :
+
 
 Pas besoin de profiling car on regarde juste les politique d'allocation.
 
@@ -164,37 +185,6 @@ Number of compute nodes : median 256, minimum 88, maximum 512.
 
 La band passante de chaque groupe est calculé par la somme de toutes les (WriteSize + ReadSize / runningTime)
 \begin{equation*}aggregate\ BW=\sum_{a=1}^{16}\left(\frac{W_{a}+R_{a}}{runtime_{a}}\right) \tag{2}\end{equation*}
-
-\section{Explication des algo}
-% - an explanation of the algorithms;
-Gekkofwd :
-- politique d'allocation de noeud I/O.
-- 
-
-GekkoFS :
-- Un system de fichier local au noeud de calcule
-- Un \emph{burst-buffer} qui est un buffer qui ce met entre l'app et le FS pour amélioré les perfs. Ce gain de perf est obtenu car il augmente l'utilisation de la band passante (en permettant le stockage de données en même temps que le calcule) et permet d'attenué la charge sur le PFS quant il y à un peaks de demande.
-- Fourni un system de nom qui est partagé entre tous les noeud de calcule. Ce mecanisme peut être remplacé par un PFS (grâce au mode d'extension GekkoFWD).
-- 
-
-Grâce à GekkoFWD, GekkoFS est utilisé comme un noeud intermédiaires entre le noeud de calcule et le noeud I/O.
-
-Pour capturé les requêtes de l'app au PFS de façon transparent GekkoFS utilise intércepte les appéles system.
-
-Une fois les requêtes capturé GekkoFWD transfére les requêtes à un seul serveur qui lui vas appliqué la politique d'allocation voulue.
-
-Grâce à GekkoFS ils on donc ajouté un thread qui check si le mappage à changer.
-
-Ce système transparent permet de d'ajouté des optimisation comme la planification des demandes au niveau des fichiers donc il on ajouté la bibliothèque AGIOS dans GekkoFWD.
-
-AGIOS :
-- fourni plusieurs ordonanceur.
-
-AGIOS permet à GekkoFWD d'utilisé différent ordonanceur.
-
-Quand un noeud I/O resoive les requêtes il les envoi à AGIOS pour ordonancé le moment ou elle seront traité.
-
-Une fois fini tous est envoyer au PFS.
 
 \section{Le perfs}
 % - commentary regarding the performance evaluation, if present;
@@ -229,9 +219,6 @@ TODO: 5.2. Allocation Decisions
 
 TODO: SECTION 6.
 
-\section{Definition *}
-
-La \emph{contention} : forte tentions sur un serveur (beaucoup de demandes).
 
 \end{document}
 
@@ -317,3 +304,28 @@ La \emph{contention} : forte tentions sur un serveur (beaucoup de demandes).
 % - on demand
 % - applique différente politique d'allocation a l'execution (dynamique)
 % - changer le nombre de noeud I/O à l'execution sans perturbé l'app
+
+
+% GekkoFS :
+% - Un system de fichier local au noeud de calcule
+% - Un \emph{burst-buffer} qui est un buffer qui ce met entre l'app et le FS pour amélioré les perfs. Ce gain de perf est obtenu car il augmente l'utilisation de la band passante (en permettant le stockage de données en même temps que le calcule) et permet d'attenué la charge sur le PFS quant il y à un peaks de demande.
+% - Fourni un system de nom qui est partagé entre tous les noeud de calcule. Ce mecanisme peut être remplacé par un PFS (grâce au mode d'extension GekkoFWD).
+
+% Grâce à GekkoFWD, GekkoFS est utilisé comme un noeud intermédiaires entre le noeud de calcule et le noeud I/O.
+
+% Pour capturé les requêtes de l'app au PFS de façon transparent GekkoFS intércepte les appéles system.
+
+% Une fois les requêtes capturé GekkoFWD transfére les requêtes à un seul serveur qui lui vas appliqué la politique d'allocation voulue.
+
+% Grâce à GekkoFS ils on donc ajouté un thread qui check si le mappage à changer.
+
+% Ce système transparent permet de d'ajouté des optimisation comme la planification des demandes au niveau des fichiers donc il on ajouté la bibliothèque AGIOS dans GekkoFWD.
+
+% AGIOS :
+% - fourni plusieurs ordonanceur.
+
+% AGIOS permet à GekkoFWD d'utilisé différent ordonanceur.
+
+% Quand un noeud I/O resoive les requêtes il les envoi à AGIOS pour ordonancé le moment ou elle seront traité.
+
+% Une fois fini tous est envoyer au PFS.
