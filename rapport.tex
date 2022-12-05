@@ -96,28 +96,28 @@ Ils ont aussi vu que toutes les applications n'ont pas les mêmes performances a
 
 \section{Propositions de l'article}
 
-La problématique d'une politique d'allocation peut être repésenté comme suit :
-Pour un ensemble de tâches ou job à exécuter et un nombre fixe de \emph{noeud I/O} il faut déterminé le nombre de \emph{noeud I/O Forwarding} qui permet de maximisé l'utilisation de la bande passante globale.
-Cette problématique peut être considéré comme un problème d'optimisation.
+La problématique d'une politique d'allocation peut être repésentée comme suit :
+Pour un ensemble de tâches ou job à exécuter et un nombre fixe de \noeudsIO{}, il faut déterminer le nombre de \emph{noeuds I/O Forwarding} qui permet de maximiser l'utilisation de la bande passante globale.
+Cette problématique peut être considérée comme un problème d'optimisation.
 
-Pour répondre à cette problématique et permettre l'allocation dynamique l'article porpose une nouvelle politique d'allocation ainsi qu'un service permettant l'allocation dynamique.
+Pour répondre à cette problématique et permettre l'allocation dynamique l'article propose une nouvelle politique d'allocation ainsi qu'un service permettant l'allocation dynamique.
 
-\subsection{La politique d'allocaion basé sur \emph{MCKP}}
+\subsection{La politique d'allocaion basée sur \emph{MCKP}}
 
-La politique d'allocation basé sur \textbf{MCKP} (\emph{Multiple-Choice Knapsack Problem}) cherche la mailleur répartition possible des \emph{noeud I/O Forwarding} aux \noeudsDeCalculs{}.
-Pour cela cette politique cherche à maximisé la band passante global en donnant plus de \emph{noeud I/O Forwarding} au applications qui en on le plus besoin et moins au autre. Ce problème d'optimisation et dérivé du problème \emph{0-1 Knapsack}.
-Pour effectué la maximisation de la band passante l'algorithms vérifie que chaque tâches à bien une taille et que le nombre globale de \emph{noeud I/O Forwarding} calculé ne dépasse pas le nombre de \emph{noeud I/O Forwarding} disponible.
+La politique d'allocation basée sur \textbf{MCKP} (\emph{Multiple-Choice Knapsack Problem}) cherche la meilleure répartition possible des \emph{noeud I/O Forwarding} aux \noeudsDeCalculs{}.
+Pour cela cette politique cherche à maximiser la bande passante globale en donnant plus de \emph{noeud I/O Forwarding} aux applications qui en ont le plus besoin et moins aux autres. Ce problème d'optimisation est dérivé du problème \emph{0-1 Knapsack}.
+Pour effectuer la maximisation de la bande passante, l'algorithme vérifie que chaque tâche a bien une taille et que le nombre global de \emph{noeud I/O Forwarding} calculé ne dépasse pas le nombre de \emph{noeud I/O Forwarding} disponibles.
 
-Ce problème fait partie de la classe de complexité en temps \emph{NP-hard} mais une solution peut être obtenu par "Dynamic Programming" qui est en temps \emph{pseudo-polynomial}.
+Ce problème fait parti de la classe de complexité en temps \emph{NP-hard} mais une solution peut être obtenue par "Dynamic Programming" qui est en temps \emph{pseudo-polynomial}.
 
-Le nombre de \noeudsDeCalculs{} dois être divisable par le nombre de \emph{noeud I/O Forwarding} pour améliorer l'équilibrage de la charge.
+Le nombre de \noeudsDeCalculs{} doit être divisible par le nombre de \emph{noeuds I/O Forwarding} pour améliorer l'équilibrage de la charge.
 
 % MCKP :
-% - Ce problem cherche à maximisé la bandpassat global en donnant plus de noeud I/O au applications qui en on le plus besoin.
+% - Ce problème cherche à maximiser la bande passante globale en donnant plus de noeuds I/O aux applications qui en ont le plus besoin.
 % - un problème d'optimisation
 % - derived from the 0-1 Knapsack
 % - items divide in $k$ classes of $N_i$ items
-% ($N$ = ensemble des nombre d'items par classes)
+% ($N$ = ensemble des nombres d'items par classes)
 % $Items = {a; b; c; d; e; f; g}, k <- 2, Items/k = C <- {{a; b; c}; {d; e; f; g}},$
 % $card(C_1) = 3 = N_1, card(C_2) = 3 = N_2$
 % - $x_{ij} = 1$ ssi item $j$ is chosen in class $N_i$
@@ -125,38 +125,37 @@ Le nombre de \noeudsDeCalculs{} dois être divisable par le nombre de \emph{noeu
 % - $W$ the total number of I/O nodes.
 % - $p_i$ is the bandwidth.
 % - problem is NP-hard
-% - la solution es obtenu par "Dynamic Programming" qui a une complexité en temps pseudo-polynomial ($O(W\sum^{k}_{i=1}N_i)$)
+% - la solution est obtenue par "Dynamic Programming" qui a une complexité en temps pseudo-polynomial ($O(W\sum^{k}_{i=1}N_i)$)
 
 \subsection{Le service permettant l'allocation dynamique (\emph{GekkoFWD})}
 
-L'article propose un service \emph{I/O forwarding} appelé \emph{GekkoFWD} qui
-implémente la politique \textbf{MCKP}. Ce service permet le changement de politiques d'allocation ainsi que le nombre de \emph{noeud I/O Forwarding} à la demande (dynamiquement) sans perturbé l'application. Il fonction au niveau utilisateur, il ne nécessite pas de modification du code des applications et il est simple à déployé. Cette simplicité en fait une solution utilie.
-Ce service est basé sur \emph{GekkoFS} qui est une système de fichier local à un noeud et qui peut ce connecté à la plupart des \emph{PFS} existant.
+L'article propose un service \emph{I/O forwarding} appelé \emph{GekkoFWD} qui implémente la politique \textbf{MCKP}. Ce service permet le changement de politiques d'allocation ainsi que le nombre de \emph{noeuds I/O Forwarding} à la demande (dynamiquement) sans perturber l'application. Il fonctionne au niveau utilisateur, il ne nécessite pas de modification du code des applications et il est simple à déployer. Cette simplicité en fait une solution utile.
+Ce service est basé sur \emph{GekkoFS} qui est un système de fichier local à un noeud et qui peut se connecter à la plupart des \emph{PFS} existants.
 
 \subsubsection{\emph{GekkoFS}}
 
-\emph{GekkoFS} est un système de fichiers local qui est exécuter sur les \noeudsDeCalculs{}. Ce système est utilisé comme un \emph{burst-buffer}. Comme sont nom l'indique c'est un buffer qui ce met entre l'application et le \emph{PFS} dans le but d'amélioré la performances des accès \emph{I/O}. Cette amélioration est en partie du à la diminution de la charge sur le \emph{PFS} quant il y a un pics de demande.
+\emph{GekkoFS} est un système de fichiers local qui est exécuté sur les \noeudsDeCalculs{}. Ce système est utilisé comme un \emph{burst-buffer}. Comme son nom l'indique, c'est un buffer qui se met entre l'application et le \emph{PFS} dans le but d'améliorer la performance des accès \emph{I/O}. Cette amélioration est en partie due à la diminution de la charge sur le \emph{PFS} quand il y a un pic de demande.
 
-Ce système permet aussi l'exécution des requêtes \emph{I/O en parallèle} de l'exécution du calcule, ce qui permet d'augmente l'utilisation de la band passante.
+Ce système permet aussi l'exécution des requêtes \emph{I/O en parallèle} de l'exécution du calcul, ce qui permet d'augmenter l'utilisation de la bande passante.
 
-Il fourni aussi un système de nom qui est partagé entre tous les \noeudsDeCalculs{}. Ce mécanisme peut être remplacé par un \emph{PFS}.
+Il fournit aussi un système de nom qui est partagé entre tous les \noeudsDeCalculs{}. Ce mécanisme peut être remplacé par un \emph{PFS}.
 
 \subsubsection{Application de technique d'optimisation (\emph{AGIOS})}
 
-\emph{GekkoFWD} nous permet d'appliqué des techniques d'optimisation de façon transparente. Pour ce faire ils ont ajouté la bibliothèque \emph{AGIOS} dans \emph{GekkoFWD}. Cette bibliothèque fourni plusieurs algorithms d'ordonnancement.
-\emph{GekkoFWD} peut donc utilisé différent ordonnanceurs sur les requêtes. Ceci permet la planification des requêtes au niveau des données.
+\emph{GekkoFWD} nous permet d'appliquer des techniques d'optimisation de façon transparente. Pour ce faire, ils ont ajouté la bibliothèque \emph{AGIOS} dans \emph{GekkoFWD}. Cette bibliothèque fournit plusieurs algorithmes d'ordonnancement.
+\emph{GekkoFWD} peut donc utiliser différents ordonnanceurs sur les requêtes. Ceci permet la planification des requêtes au niveau des données.
 
 \section{Algorithme}
 
-Grâce à \emph{GekkoFWD}, \emph{GekkoFS} est utilisé comme un noeud intermédiaires entre les \noeudsDeCalculs{} et les \emph{noeud I/O}. Pour cela \emph{GekkoFS} capture les requêtes que fait l'application au \emph{PFS}. Cette capture est transparent et ce fait en interceptant les appéles système. Une fois les requêtes capturé \emph{GekkoFWD} transfére les requêtes à un seul serveur qui vas les passé à \emph{AGIOS} pour ordonancé le moment ou elle seront traité. Grâce au requêtes il est possible de determiné quelle politique d'allocation appliqué.
+Grâce à \emph{GekkoFWD}, \emph{GekkoFS} est utilisé comme un noeud intermédiaire entre les \noeudsDeCalculs{} et les \emph{noeuds I/O}. Pour cela, \emph{GekkoFS} capture les requêtes que fait l'application au \emph{PFS}. Cette capture est transparente et se fait en interceptant les appels systèmes. Une fois les requêtes capturées, \emph{GekkoFWD} transfère les requêtes à un seul serveur qui va les passer à \emph{AGIOS} pour ordonnancer le moment où elles seront traitées. Grâce aux requêtes, il est possible de déterminer quelle politique d'allocation appliquer.
 
-Pour savoir quant le mappage à changer on ajoute un thread grâce à \emph{GekkoFS}.
+Pour savoir quand le mappage à changer, on ajoute un thread grâce à \emph{GekkoFS}.
 
 \section{Les performances}
 
-Ils on fait les expérimentations sur la platform Grid 5000 (G5K) avec 2 cluster à Nancy : Grimoire (8 noeud) et Gros (124 noeud).
+Ils ont fait les expérimentations sur la plateforme Grid 5000 (G5K) avec 2 clusters à Nancy : Grimoire (8 noeuds) et Gros (124 noeuds).
 
-Ils ont utilisé 5 noyaux d'applications différentes ainsi que les micro-benchmark IOR :
+Ils ont utilisé 5 noyaux d'applications différentes ainsi que les micro-benchmarks IOR :
 \begin{enumerate}
   \item S3D I/O Kernel : S3D
   \item MADBench2 : MAD
@@ -166,17 +165,17 @@ Ils ont utilisé 5 noyaux d'applications différentes ainsi que les micro-benchm
   \item [IOR] MPI-IO / POSIX : IOR-MPI, POSIX-S, POSIX-L
 \end{enumerate}
 
-Ils ont mesuré la band passant pour chaque applications et il confirme les résultat de FORGE. Ils ont fait ce test avec des nombre de noeud et des nombre de processus différent.
-Les ensembles de tâches pour testé de changement d'allocation dynamique été composé de BT-C, BT-D, IOR-MPI, POSIX-L, MAD, et S3D.
+Ils ont mesuré la bande passante pour chaque application et il confirme les résultats de FORGE. Ils ont fait ce test avec des nombres de noeuds et des nombres de processus différents.
+Les ensembles de tâches pour tester le changement d'allocation dynamique étaient composés de BT-C, BT-D, IOR-MPI, POSIX-L, MAD, et S3D.
 
-Ils constate bien que les accès statique sont pas très efficace sauf pour S3D. Même constatation pour l'allocation par taille. Dans c'est 2 cas on vois que par exemple IOR-MPI pourrai être bien mailleurs avec plus de \emph{noeud I/O forwarding}. Ils constate bien un nétte ammélioration avec leur implémentation \emph{MCKP}. Le gain global d'utilisation de la band passante est jusqu'à 85\% par rapport à la politique statique.
+Il constate bien que les accès statiques ne sont pas très efficaces sauf pour S3D. Même constatation pour l'allocation par taille. Dans ces 2 cas, on voit que par exemple IOR-MPI pourrait être bien meilleurs avec plus de \emph{noeuds I/O forwarding}. Il constate bien un nette amélioration avec leur implémentation \emph{MCKP}. Le gain global d'utilisation de la bande passante est jusqu'à 85\% par rapport à la politique statique.
 
-Ils ont comparer différents sénario pour montré que leur implémentation fonctionne bien.
+Ils ont comparé différents sénarios pour montrer que leur implémentation fonctionne bien.
 
-\section{Les article qu'il référence}
+\section{Les articles qu'il référence}
 % - information about other papers that reference it.
 
-Ils existe :/
+Il existe :/
 
 TODO: SECTION 6.
 
@@ -185,15 +184,15 @@ TODO: SECTION 6.
 TODO:
 
 Le papier parle de :
-- regarde plusieurs politique de répartition des ressources en fonction des patternes d'accées au données.
-- comparé différent patterns d'accées pour mieux voir les benefices et désavantages
+- regarde plusieurs politiques de répartition des ressources en fonction des patterns d'accès aux données.
+- comparer différents patterns d'accès pour mieux voir les bénéfices et désavantages.
 
 Le papier plaide pour :
-- allocation dynamique des noeud I/O par rapport au type de calculs / patternes des application
-- repartire des applications sur plusieur reources pour maximisé l'utilisation de la bande passante.
-- Le changement de politique ce fait au démarrage ou au changement des applications (job) lancé. (pour déterminé le mailleur nb de I/O forwarding nodes)
+- l'allocation dynamique des noeuds I/O par rapport au type de calculs / patterns des applications.
+- répartir des applications sur plusieurs ressources pour maximiser l'utilisation de la bande passante.
+- le changement de politique se fait au démarrage ou au changement des applications (job) lancées. (pour déterminer le meilleur nb de I/O forwarding nodes)
 
-1. maximize la band passante en donnant des noeud de stockage au application qui vont mieux les utilisé. (et pas au applications qui accéde peut au données?).
+1. maximize la bande passante en donnant des noeuds de stockage aux applications qui vont mieux les utiliser. (et pas aux applications qui accèdent peu aux données ?).
 
 % load all bibliographies
 \bibliography{biblio}
