@@ -52,9 +52,9 @@ Pour répondre au besoin de puissance croissante, on augmente le nombre de \emph
 
 \subsection{La technique du \emph{I/O forwarding}}
 
-Cette technique est très utilisé pour le calcul haut performance, notamment par des machine du top 500\cite{}. Elle permet d'augmenté les performances global en diminuent la concentration des requêtes sur les \emph{noeud I/O}. Pour cela elle évite les accès direct aux \emph{noeud I/O} en ce placent entre \emph{les noeud de calcule} et les \emph{noeud I/O}. Concrètement un groupe de \emph{noeud I/O} recevoir les requêtes et applique des traitement avant de les transmet au bon \emph{noeud I/O}. Ce technique est transparent pour les utilisateurs, elle cherche à appliqué une répartition uniforme entre les noeud et permet le controlle des demandes d'accès au données ce qui permet l'application de technique d'optimisation. Ce techniques peuvent être de différentes nature comme l'agrégation des requêtes (en combinent plusieurs petite requêtes) ou la planification des requêtes.
+Cette technique est très utilisée pour le calcul haut performance, notamment par des machines du top 500\cite{}. Elle permet d'augmenter les performances globales en diminuant la concentration des requêtes sur les \emph{noeuds I/O}. Pour cela, elle évite les accès directs aux \emph{noeuds I/O} en se plaçant entre \emph{les noeuds de calculs} et les \emph{noeuds I/O}. Concrètement, un groupe de \emph{noeuds I/O} reçoit les requêtes et appliquent des traitements avant de les transmettre aux bons \emph{noeuds I/O}. Cette technique est transparente pour les utilisateurs, elle cherche à appliquer une répartition uniforme entre les noeuds et permet le contrôle des demandes d'accès aux données ce qui permet l'application de technique d'optimisation. Ces techniques peuvent être de différentes natures comme l'agrégation des requêtes (en combinant plusieurs petites requêtes) ou la planification des requêtes.
 
-Habituellement les \emph{noeud I/O} qui s'occupe de la réception des requêtes sont assigné statiquement à un noeud de calcule et celle-ci peut dépendre de la topologie du réseau, du nombre de \emph{noeud I/O}\dots Cette assignation ne correspond pas tous les temps au besoin de l'application qui peut ne pas utilisé toute la bande passant ou être ralentie par celle-ci. L'assignation statiquement amène donc à une mauvaise utilisation des resources. Dans la suite du rapport j'appelerai les \emph{noeud I/O} qui s'occupe de la réception les \emph{noeud I/O Forwarding}.
+Habituellement les \emph{noeuds I/O} qui s'occupent de la réception des requêtes sont assigné statiquement à un noeud de calculs et celle-ci peut dépendre de la topologie du réseau, du nombre de \emph{noeuds I/O}\dots Cette assignation ne correspond pas tout le temps au besoin de l'application qui peut ne pas utiliser toute la bande passante ou être ralentie par celle-ci. L'assignation statique amène donc à une mauvaise utilisation des ressources. Dans la suite du rapport, j'appellerai les \emph{noeuds I/O} qui s'occupent de la réception les \emph{noeuds I/O Forwarding}.
 
 \section{Le problème traité par l'article}
 
@@ -63,7 +63,7 @@ Les problèmes de l'allocation statique sont :
 \begin{itemize}
   \item Le nombre de \emph{noeud I/O} et prédéfinis et donc ne peut pas changer pendant l'execution ou s'adapté à une application.
   \item Ce n'est pas flexible car la politique d'allocation des \emph{noeud I/O} reste la même tous au long de l'execution.
-  \item On peut être amené à de mauvaise allocation des resources (l'article cite les travaux de Yu et al. [8] Bez et al. [9])\cite{}
+  \item On peut être amené à de mauvaise allocation des ressources (l'article cite les travaux de Yu et al. [8] Bez et al. [9])\cite{}
   \item En fonction de l'application on peut ce retrouvé avec une band passant peut utilisé ou qui ralentie l'application. Ce qui fait qu'on utilise pas assez ou trop de \emph{noeud I/O}.
   \item Ne permet pas le changement facile de la strategies d'allocation sans avoir un mauvais impacte sur les performances.
 \end{itemize}
@@ -185,7 +185,7 @@ TODO: SECTION 6.
 TODO:
 
 Le papier parle de :
-- regarde plusieurs politique de répartition des resources en fonction des patternes d'accées au données.
+- regarde plusieurs politique de répartition des ressources en fonction des patternes d'accées au données.
 - comparé différent patterns d'accées pour mieux voir les benefices et désavantages
 
 Le papier plaide pour :
@@ -243,7 +243,7 @@ Le papier plaide pour :
 % - la connection entre les NInt et les Ncal est statique
 % - Donc l'application peut utilisé qu'un nombre prédéfinis de noeud I/O est communique avec un seul NInt.
 % - pas assé flexible
-% - ça peut amené a de mauvaise allocation des resources (Yu et al. [8] Bez et al. [9])
+% - ça peut amené a de mauvaise allocation des ressources (Yu et al. [8] Bez et al. [9])
 % - La bande passant est déterminé par le fonctionnement des applications (plus ou moins de calcule avec plus ou moins d'accès au données...) ce qui fait qu'avec un nombre statique de noeud ou peut ce retouvé à avoir top de noeud I/O et donc une bande passant pas utilisé a sont pliens potenciel. (caractéristiques de la charge de travail / accès I/O).
 
 % Pour les perfs du début ils on :
