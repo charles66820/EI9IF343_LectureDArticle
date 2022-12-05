@@ -30,7 +30,7 @@
 
 \section{L'objectif de l'article}
 
-L'objectif de l'article est d'améliorer l'utilisation de la bande passante entre \emph{les noeuds de calculs} et les \emph{noeuds de stockage des données}, que j'appellerai \noeudsIO{} dans le reste de ce rapport. Plus précisément, l'objectif est de permettre le changement dynamique des politiques d'accès aux \noeudsIO{}. Pour cela, l'article propose :
+L'objectif de l'article est d'améliorer l'utilisation de la bande passante entre les \noeudsDeCalculs{} et les \emph{noeuds de stockage des données}, que j'appellerai \noeudsIO{} dans le reste de ce rapport. Plus précisément, l'objectif est de permettre le changement dynamique des politiques d'accès aux \noeudsIO{}. Pour cela, l'article propose :
 \begin{itemize}
   \item une implémentation qui permet ce changement en fonction des patterns d'accès aux \noeudsIO{}.
   \item ainsi qu'une politique basé sur le problème du sac à dos à choix multiple \emph{Multiple-Choice Knapsack problem}.
@@ -47,13 +47,13 @@ plus d'accès aux données. Cette augmentation est due à plusieurs facteurs com
   \item l'augmentation des quantités de données a traité.
   \item la variété des types d'applications à accès hétérogénéité aux données, l'intelligence artificielle, le bigData\dots
 \end{itemize}
-Pour répondre au besoin de puissance croissante, on augmente le nombre de \emph{noeuds de calculs} ce qui a pour effet d'augmenter le nombre de requêtes système de fichier parallèle (\emph{PFS}). Ce système fini par ne plus pouvoir traité autant de requêtes, car tous les \noeudsIO{} se retrouvent saturés. Pour réglé ce problème les \emph{PFS} utilise la technique du \emph{I/O forwarding} qui diminue le nombre de noeuds du \emph{PFS} accessible par \emph{les noeuds de calcul}.
+Pour répondre au besoin de puissance croissante, on augmente le nombre de \noeudsDeCalculs{} ce qui a pour effet d'augmenter le nombre de requêtes système de fichier parallèle (\emph{PFS}). Ce système fini par ne plus pouvoir traité autant de requêtes, car tous les \noeudsIO{} se retrouvent saturés. Pour réglé ce problème les \emph{PFS} utilise la technique du \emph{I/O forwarding} qui diminue le nombre de noeuds du \emph{PFS} accessible par les \noeudsDeCalculs{}.
 
 \subsection{La technique du \emph{I/O forwarding}}
 
-Cette technique est très utilisée pour le calcul haut performance, notamment par des machines du top 500\cite{}. Elle permet d'augmenter les performances globales en diminuant la concentration des requêtes sur les \noeudsIO{}. Pour cela, elle évite les accès directs aux \noeudsIO{} en se plaçant entre \emph{les noeuds de calculs} et les \noeudsIO{}. Concrètement, un groupe de \noeudsIO{} reçoit les requêtes et appliquent des traitements avant de les transmettre aux bons \noeudsIO{}. Cette technique est transparente pour les utilisateurs, elle cherche à appliquer une répartition uniforme entre les noeuds et permet le contrôle des demandes d'accès aux données ce qui permet l'application de technique d'optimisation. Ces techniques peuvent être de différentes natures comme l'agrégation des requêtes (en combinant plusieurs petites requêtes) ou la planification des requêtes.
+Cette technique est très utilisée pour le calcul haut performance, notamment par des machines du top 500\cite{}. Elle permet d'augmenter les performances globales en diminuant la concentration des requêtes sur les \noeudsIO{}. Pour cela, elle évite les accès directs aux \noeudsIO{} en se plaçant entre les \noeudsDeCalculs{} et les \noeudsIO{}. Concrètement, un groupe de \noeudsIO{} reçoit les requêtes et appliquent des traitements avant de les transmettre aux bons \noeudsIO{}. Cette technique est transparente pour les utilisateurs, elle cherche à appliquer une répartition uniforme entre les noeuds et permet le contrôle des demandes d'accès aux données ce qui permet l'application de technique d'optimisation. Ces techniques peuvent être de différentes natures comme l'agrégation des requêtes (en combinant plusieurs petites requêtes) ou la planification des requêtes.
 
-Habituellement les \noeudsIO{} qui s'occupent de la réception des requêtes sont assigné statiquement à un noeud de calculs et celle-ci peut dépendre de la topologie du réseau, du nombre de \noeudsIO{}\dots Cette assignation ne correspond pas tout le temps au besoin de l'application qui peut ne pas utiliser toute la bande passante ou être ralentie par celle-ci. L'assignation statique amène donc à une mauvaise utilisation des ressources. Dans la suite du rapport, j'appellerai les \noeudsIO{} qui s'occupent de la réception les \emph{noeuds I/O Forwarding}.
+Habituellement les \noeudsIO{} qui s'occupent de la réception des requêtes sont assigné statiquement à un \noeudDeCalculs{} et celle-ci peut dépendre de la topologie du réseau, du nombre de \noeudsIO{}\dots Cette assignation ne correspond pas tout le temps au besoin de l'application qui peut ne pas utiliser toute la bande passante ou être ralentie par celle-ci. L'assignation statique amène donc à une mauvaise utilisation des ressources. Dans la suite du rapport, j'appellerai les \noeudsIO{} qui s'occupent de la réception les \emph{noeuds I/O Forwarding}.
 
 \section{Le problème traité par l'article}
 
@@ -67,14 +67,14 @@ Les problèmes de l'allocation statique sont :
   \item Ne permets pas le changement facile de la stratégie d'allocation sans avoir un mauvais impacte sur les performances.
 \end{itemize}
 
-\subsection{Évaluations des politique d'allocations}
+\subsection{Évaluations des politiques d'allocations}
 
-Dans l'article ils on commancé par évalué les politiques d'allocation suivant :
+Dans l'article, ils ont commencé par évaluer les politiques d'allocation suivante :
 \begin{itemize}
-  \item \emph{ZERO and ONE Policies} chaque application à 0 ou un \emph{noeud I/O} alloué.
-  \item \emph{STATIC Policy} le nombre de \emph{noeud I/O} est déterminé par rapport au nombre de noeud de calcul.
-  \item \emph{SIZE and PROCESS Policies} le nombre de \emph{noeud I/O} est répartition proportionnellement entre les application par rapport à leur nombre de noeud de calcul ou leur nombre de processus.
-  \item \emph{ORACLE Policy} chaque application ce vois alloué un nombre de \emph{noeud I/O} qui maximise l'utilisation de la band passant. Cette allocation est déterminé par une évaluations des performances.
+  \item \emph{ZERO and ONE Policies} chaque application à 0 ou un \noeudIO{} alloué.
+  \item \emph{STATIC Policy} le nombre de \noeudsIO est déterminé par rapport au nombre de \noeudsDeCalculs{}.
+  \item \emph{SIZE and PROCESS Policies} le nombre de \emph{noeuds I/O} est réparti proportionnellement entre les applications par rapport à leur nombre de \noeudsDeCalculs{} ou leur nombre de processus.
+  \item \emph{ORACLE Policy} chaque application se voit allouer un nombre de \emph{noeuds I/O} qui maximise l'utilisation de la bande passante. Cette allocation est déterminée par une évaluation des performances.
 \end{itemize}
 
 Il on effectué ces évaluations en faisant plusieurs lancements avec différent nombre de \emph{noeud I/O}, différentes politiques d'allocation et avec différentes applications pour avoir différent patterns d'accès au PFS. Ces évaluations on été effectué sur le supercalculateur MareNostrum 4 (MN4) en utilisent un outil appelé FORGE (I/O \textbf{For}wardin\textbf{g E}xplorer) qui permet de re-lancer les profiles I/O des applications.
@@ -85,7 +85,7 @@ Ils non pas eu besoin de profiling car ont s'intéresse qu'aux politiques d'allo
 
 Ils ont éxécuté 189 patterns sur la machine MN4 et il ont fair des group de 16 patterns pour simulé chaque politique (Un pattern représente une application).
 Ils ont donc généré 10 000 groupe de 16 patterns qui prènne le même temps d'exécution.
-Ils ont utilisé jusqu'à 128 \emph{noeud I/O forwarding}, 8 par application ($128/16=8$). Avec un nombre de noeud de calcule entre 88 et 512 et une median de 256.
+Ils ont utilisé jusqu'à 128 \emph{noeud I/O forwarding}, 8 par application ($128/16=8$). Avec un nombre de \noeudsDeCalculs{} entre 88 et 512 et une median de 256.
 
 La band passante de chaque groupe est calculé par la somme de toutes les (WriteSize + ReadSize / runningTime)
 \begin{equation*}aggregate\ BW=\sum_{a=1}^{16}\left(\frac{W_{a}+R_{a}}{runtime_{a}}\right) \tag{2}\end{equation*}
@@ -103,13 +103,13 @@ Pour répondre à cette problématique et permettre l'allocation dynamique l'art
 
 \subsection{La politique d'allocaion basé sur \emph{MCKP}}
 
-La politique d'allocation basé sur \textbf{MCKP} (\emph{Multiple-Choice Knapsack Problem}) cherche la mailleur répartition possible des \emph{noeud I/O Forwarding} aux noeud de calculs.
+La politique d'allocation basé sur \textbf{MCKP} (\emph{Multiple-Choice Knapsack Problem}) cherche la mailleur répartition possible des \emph{noeud I/O Forwarding} aux \noeudsDeCalculs{}.
 Pour cela cette politique cherche à maximisé la band passante global en donnant plus de \emph{noeud I/O Forwarding} au applications qui en on le plus besoin et moins au autre. Ce problème d'optimisation et dérivé du problème \emph{0-1 Knapsack}.
 Pour effectué la maximisation de la band passante l'algorithms vérifie que chaque tâches à bien une taille et que le nombre globale de \emph{noeud I/O Forwarding} calculé ne dépasse pas le nombre de \emph{noeud I/O Forwarding} disponible.
 
 Ce problème fait partie de la classe de complexité en temps \emph{NP-hard} mais une solution peut être obtenu par "Dynamic Programming" qui est en temps \emph{pseudo-polynomial}.
 
-Le nombre de noeud de calcule dois être divisable par le nombre de \emph{noeud I/O Forwarding} pour améliorer l'équilibrage de la charge.
+Le nombre de \noeudsDeCalculs{} dois être divisable par le nombre de \emph{noeud I/O Forwarding} pour améliorer l'équilibrage de la charge.
 
 % MCKP :
 % - Ce problem cherche à maximisé la bandpassat global en donnant plus de noeud I/O au applications qui en on le plus besoin.
@@ -134,11 +134,11 @@ Ce service est basé sur \emph{GekkoFS} qui est une système de fichier local à
 
 \subsubsection{\emph{GekkoFS}}
 
-\emph{GekkoFS} est un système de fichiers local qui est exécuter sur \emph{les noeud de calcule}. Ce système est utilisé comme un \emph{burst-buffer}. Comme sont nom l'indique c'est un buffer qui ce met entre l'application et le \emph{PFS} dans le but d'amélioré la performances des accès \emph{I/O}. Cette amélioration est en partie du à la diminution de la charge sur le \emph{PFS} quant il y a un pics de demande.
+\emph{GekkoFS} est un système de fichiers local qui est exécuter sur les \noeudsDeCalculs{}. Ce système est utilisé comme un \emph{burst-buffer}. Comme sont nom l'indique c'est un buffer qui ce met entre l'application et le \emph{PFS} dans le but d'amélioré la performances des accès \emph{I/O}. Cette amélioration est en partie du à la diminution de la charge sur le \emph{PFS} quant il y a un pics de demande.
 
 Ce système permet aussi l'exécution des requêtes \emph{I/O en parallèle} de l'exécution du calcule, ce qui permet d'augmente l'utilisation de la band passante.
 
-Il fourni aussi un système de nom qui est partagé entre tous \emph{les noeud de calcule}. Ce mécanisme peut être remplacé par un \emph{PFS}.
+Il fourni aussi un système de nom qui est partagé entre tous les \noeudsDeCalculs{}. Ce mécanisme peut être remplacé par un \emph{PFS}.
 
 \subsubsection{Application de technique d'optimisation (\emph{AGIOS})}
 
@@ -147,7 +147,7 @@ Il fourni aussi un système de nom qui est partagé entre tous \emph{les noeud d
 
 \section{Algorithme}
 
-Grâce à \emph{GekkoFWD}, \emph{GekkoFS} est utilisé comme un noeud intermédiaires entre \emph{les noeud de calcule} et les \emph{noeud I/O}. Pour cela \emph{GekkoFS} capture les requêtes que fait l'application au \emph{PFS}. Cette capture est transparent et ce fait en interceptant les appéles système. Une fois les requêtes capturé \emph{GekkoFWD} transfére les requêtes à un seul serveur qui vas les passé à \emph{AGIOS} pour ordonancé le moment ou elle seront traité. Grâce au requêtes il est possible de determiné quelle politique d'allocation appliqué.
+Grâce à \emph{GekkoFWD}, \emph{GekkoFS} est utilisé comme un noeud intermédiaires entre les \noeudsDeCalculs{} et les \emph{noeud I/O}. Pour cela \emph{GekkoFS} capture les requêtes que fait l'application au \emph{PFS}. Cette capture est transparent et ce fait en interceptant les appéles système. Une fois les requêtes capturé \emph{GekkoFWD} transfére les requêtes à un seul serveur qui vas les passé à \emph{AGIOS} pour ordonancé le moment ou elle seront traité. Grâce au requêtes il est possible de determiné quelle politique d'allocation appliqué.
 
 Pour savoir quant le mappage à changer on ajoute un thread grâce à \emph{GekkoFS}.
 
@@ -213,7 +213,7 @@ Le papier plaide pour :
 %- le \emph{I/O forwarding} cherche a corriger le problème en diminuent le nombre de machine qui accéde au PFS.
 
 % NInt : noeud interface
-% Ncal : noeud de calcule
+% Ncal : noeud de calculs
 
 % Le \emph{I/O forwarding} consiste à une groupe de noeud qui resoive les requétes de
 % l'application et les transmet au system de fichier paralléle. Permet aussi de changer la form
@@ -223,7 +223,7 @@ Le papier plaide pour :
 % - une technique très utilisé dans le HPC
 % - Cette technique permet d'augmenté les performances
 % - évite les accès direct au machine de stockage parallèle
-% - NInt ce met entre les noeud de calcule et les noeud PFS
+% - NInt ce met entre les noeuds de calculs et les noeud PFS
 % - Ajouté des Nint permet de controlé les demand d'accès au données et d'appliqué des théchniques d'optimisation
 % - c'est transparent pour les utilisateurs (app, FS...)
 % - diminuent la contention à accès au serveurs de stockage de données.
@@ -235,7 +235,7 @@ Le papier plaide pour :
 % - la planification des demandes
 % - l'agrégation des demandes.
 
-% La technique habituelle est d'assigné statiquement un noeud de stockage à un noeud de calcule.
+% La technique habituelle est d'assigné statiquement un noeud de stockage à un noeud de calculs.
 % Ces liens ce correspond pas tous le temps au transfére de données d'on l'appication à besoin.
 
 % Le pb :
@@ -300,11 +300,11 @@ Le papier plaide pour :
 
 
 % GekkoFS :
-% - Un system de fichier local au noeud de calcule
+% - Un system de fichier local aux noeuds de calculs
 % - Un \emph{burst-buffer} qui est un buffer qui ce met entre l'app et le FS pour amélioré les perfs. Ce gain de perf est obtenu car il augmente l'utilisation de la band passante (en permettant le stockage de données en même temps que le calcule) et permet d'attenué la charge sur le PFS quant il y à un peaks de demande.
-% - Fourni un system de nom qui est partagé entre tous les noeud de calcule. Ce mecanisme peut être remplacé par un PFS (grâce au mode d'extension GekkoFWD).
+% - Fourni un system de nom qui est partagé entre tous les noeuds de calculs. Ce mecanisme peut être remplacé par un PFS (grâce au mode d'extension GekkoFWD).
 
-% Grâce à GekkoFWD, GekkoFS est utilisé comme un noeud intermédiaires entre le noeud de calcule et le noeud I/O.
+% Grâce à GekkoFWD, GekkoFS est utilisé comme un noeud intermédiaires entre le noeud de calculs et le noeud I/O.
 
 % Pour capturé les requêtes de l'app au PFS de façon transparent GekkoFS intércepte les appéles system.
 
