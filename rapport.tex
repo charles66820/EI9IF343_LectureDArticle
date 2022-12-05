@@ -159,38 +159,31 @@ Grâce à \emph{GekkoFWD}, \emph{GekkoFS} est utilisé comme un noeud intermédi
 
 Pour savoir quant le mappage à changer on ajoute un thread grâce à \emph{GekkoFS}.
 
-
 \section{Les performances}
 
-% - commentary regarding the performance evaluation, if present;
+Ils on fait les expérimentations sur la platform Grid 5000 (G5K) avec 2 cluster à Nancy : Grimoire (8 noeud) et Gros (124 noeud).
 
-Il on un gain global d'utilisation de la band passante jusqu'à 85\% par rapport à la politique statique de base.
+Ils ont utilisé 5 noyaux d'applications différentes ainsi que les micro-benchmark IOR :
+\begin{enumerate}
+  \item S3D I/O Kernel : S3D
+  \item MADBench2 : MAD
+  \item HACC-IO : HACC
+  \item S3aSim : SIM
+  \item NAS BT-IO : BT-C, BT-D
+  \item [IOR] MPI-IO / POSIX : IOR-MPI, POSIX-S, POSIX-L
+\end{enumerate}
 
+Ils ont mesuré la band passant pour chaque applications et il confirme les résultat de FORGE. Ils ont fait ce test avec des nombre de noeud et des nombre de processus différent.
+Les ensembles de tâches pour testé de changement d'allocation dynamique été composé de BT-C, BT-D, IOR-MPI, POSIX-L, MAD, et S3D.
 
-Ils on fait les expérimentations sur la platform Grid 5000 (G5K) avec 2 cluster à Nancy : Grimoire (8 noeud) et Gros (124 noeud). % conf
+Ils constate bien que les accès statique sont pas très efficace sauf pour S3D. Même constatation pour l'allocation par taille. Dans c'est 2 cas on vois que par exemple IOR-MPI pourrai être bien mailleurs avec plus de \emph{noeud I/O forwarding}. Ils constate bien un nétte ammélioration avec leur implémentation \emph{MCKP}. Le gain global d'utilisation de la band passante est jusqu'à 85\% par rapport à la politique statique.
 
-5 différents app kernels + les micro-benchmark IOR :
-1. S3D I/O Kernel
-2. MADBench2
-3. HACC-IO
-4. S3aSim
-5. NAS BT-IO
+Ils ont comparer différents sénario pour montré que leur implémentation fonctionne bien.
 
-Ils on mesuré la band passant pour chaque applications et il confirm les résultat de FORGE. Ils ont fait ce test avec des nombre de noeud et des nombre de processus différent.
-
-set of jobs composed of BT-C, BT-D, IOR-MPI, POSIX-L, MAD, and S3D to test dynamically changing the allocated I/O nodes
-
-il svois que c'est pas ouf l'accés statique sauf pour S3D. Distribution non optimal. On vois que IOR-MPI pourrai être mailleur avec plus d'un I/O forwarding nodes.
-
-une tache de chaque app : HACC, IOR-MPI, SIM, IOR-MPI, IOR-MPI, POSIX-S, POSIX-L, BT-C, MAD, MAD, S3D, HACC, HACC, and BT-D. Figure 9 on voi les gains.
-
-
-
-TODO: 5.2. Allocation Decisions
-
-
-\section{Les autre publications}
+\section{Les article qu'il référence}
 % - information about other papers that reference it.
+
+Ils existe :/
 
 TODO: SECTION 6.
 
