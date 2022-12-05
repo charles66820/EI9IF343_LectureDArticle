@@ -32,12 +32,13 @@
 \section{L'objectif de l'article}
 % TODO: the objective of the paper;
 
-L'article s'intéresse à différante politique d'accés au noeux de données en fonction des
-patternes d'accès au données par l'applicaiton.
+% truc dynamique
 
-L'article propose une politique basé sur le problème du sac à dos (Knapsack problem) à choix
-multiple. Ce problem cherche à maximisé la bandpassat global en donnant plus de noeux I/O au
-applications qui en on le plus besoin.
+L'objectif de l'article est d'amélioré l'utilisation de la bande passante entre les noeud de calcule et les \emph{noeud des stockage des données}, que j'appailerai \emph{noeud I/O} dans le reste des ce rapport. Plus présisément l'objectif est permettre le changement dynamique des politiques d'accés aux \emph{noeud I/O}. Pour cela l'article propose :
+\begin{itemize}
+  \item une implémentation qui permet ce changement en fontion des patterns d'accé
+  \item ainsi qu'une politique basé sur le problème du sac à dos à choix multiple \emph{Multiple-Choice Knapsack problem}.
+\end{itemize}
 
 Il propose aussi une solution qui permet d'utilisé, à la demande, au niveaux utilisateur et
 pandent l'execution, différantes politiques de \emph{I/O forwarding}.
@@ -45,47 +46,24 @@ pandent l'execution, différantes politiques de \emph{I/O forwarding}.
 Il montre que leur technique augment de façon transparent l'utilisation de la bande passante
 globale jusque'à 85\% par rapport a la politique statique utilisé par défault. Il le montre
 avec de nombreuse expérimentations et directement sur une infrastructure (live setup).
-
-
 \section{Le context de l'article}
 % - its scientific context or the background to understand the work;
 
-Le context de l'article est :
-- Les applications HPC font de plus en plus d'accès au données nommé (I/O)
-- Il y a pliens de type d'applicaitons (accès hétérogénéité aux données, IA, bigData)
-- on augment le nombre de moeux de calculs pour avoir plus de performance mais le PFS ne peut pas scale pour autant de noeux. (je suppose une histoire de broadcast qui faut mettre en multicast?)
-- le \emph{I|O forwarding} cherche a corriger le problème en diminuent le nombre de machine qui accéde au PFS.
+Cette article ce place dans le contexte ou les supercalculateur font de plus en plus d'accès au données. Cette augmentation est du à plusieurs facteurs comme :
+\begin{itemize}
+  \item l'augmentation de la puissance de calcule
+  \item l'augmentation des quantités de données a traité
+  \item la variété des type d'applicaitons à accès hétérogénéité aux données, l'intéligence artificiel, le bigData\dots
+\end{itemize}
+Pour répondre au besoin de pussiance croissante on augmente le nombre de noeud de calcule ce qui à pour effét d'aumenté le nombre de requêtes système de fichier parallèle (\emph{PFS}). Ce système fini par ne plus pouvoir traité autent de requêtes car tous les \emph{noeud I/O} ce retouve saturé. Pour réglé ce problème les \emph{PFS} utilise la technique du \emph{I/O forwarding} qui diminue le nombre de noeud du \emph{PFS} accessible par les noeud de calcule.
 
+\subsection{La technique du \emph{I/O forwarding}}
 
-La technique habituelle est d'assigné statiquement un noeux de stockage à un noeux de calcule.
-Ces liens ce correspond pas tous le temps au transfére de données d'on l'appication à besoin.
-Cette technique amméne à une mauvaise utilisation des resources.
+Cette technique est très utilisé pour le calcul haut performance, notamment par des machine du top 500\cite{}. Elle permet d'augmenté les performances global en diminuent la concentration des requêtes sur les \emph{noeud I/O}. Pour cela elle évite les accès direct aux \emph{noeud I/O} en ce placent entre les noeud de calcule et les \emph{noeud I/O}. Concrètement un groupe de \emph{noeud I/O} recevoir les requêtes et applique des traitement avant de les transmet au bon \emph{noeud I/O}. Ce technique est transparent pour les utilisateurs, elle cherche à appliqué une répartition uniforme entre les noeud et permet le controlle des demandes d'accès au données ce qui permet l'appication de technique d'optiminsation. Ce techniques peuvent être de différantes nature comme l'agrégation des requêtes (en combinent plusieurs petite requêtes) ou la planification des requêtes.
 
-% NInt : noeux interface
-% Ncal : noeux de calcule
+Habituelle le \emph{noeud I/O} qui s'occupe de la réception des requêtes sont assigné statiquement à un noeud de calcule et celle-ci peut déprendre de la topologie du réseau, du nombre de \emph{noeud I/O}\dots Cette assignation ne correspond pas tous les temps au besoin de l'applicaiton qui peut ne pas utilisé toute la bande passant ou être ralentie par celle-ci. Cette technique amène donc à une mauvaise utilisation des resources.
 
-Le \emph{I|O forwarding} consiste à une groupe de noeux qui resoive les requétes de
-l'applicaiton et les transmet au system de fichier paralléle. Permet aussi de changer la form
-des requétes (Ex : au lieu de plusieurs petite requétes on en fait une seul grand).
-
-Le \emph{I|O forwarding} :
-- une technique très utilisé dans le HPC
-- Cette technique permet d'augmenté les performances
-- évite les accès direct au machine de stockage parallèle
-- NInt ce met entre les noeux de calcule et les noeux PFS
-- Ajouté des Nint permet de controlé les demand d'accès au données et d'appliqué des théchniques d'optimisation
-- c'est transparent pour les utilisateurs (app, FS...)
-- diminuent la contention à accès au serveurs de stockage de données.
-- try to répatition uniform ?
-- utilisé par des machine du top 500
-- 
-
-
-les théchniques d'optimisation :
-- la planification des demandes
-- l'agrégation des demandes.
--
-
+%TODO: OUI
 
 Le papier parle de :
 - regarde plusieurs politique de répartition des resources en fonction des patternes d'accées au données.
@@ -93,47 +71,49 @@ Le papier parle de :
 - 
 
 Contributions :
-1. Le papier évaluons plusieurs politiques d'allocation \emph{I/O forwarding} => démontre que l'allocation dynamique peut amélioré l'utilisation de la bande passante et l'utilisation des noeux I/O.
+1. Le papier évaluons plusieurs politiques d'allocation \emph{I/O forwarding} => démontre que l'allocation dynamique peut amélioré l'utilisation de la bande passante et l'utilisation des noeud I/O.
 
-2. Une politique d'allocation basé sur \emph{Multiple-Choice Knapsack Problem} (\textbf{MCKP}) pour la réprtition des noeux I/O aux app.
+2. Une politique d'allocation basé sur \emph{Multiple-Choice Knapsack Problem} (\textbf{MCKP}) pour la réprtition des noeud I/O aux app.
 
 3. Il propose un service \emph{I/O forwarding} appelé \emph{GekkoFWD} qui implémente la politique \textbf{MCKP}. on-demand, au user-level, sans modif du code, simple à déployé, utilise sont propre fs.
 Ce fs est enrichi pour perpètre différant déploiement??.
 
 Le papier plaide pour :
-- allocation dynamique des noeux I/O par rapport au type de calculs / patternes des applicaiton
+- allocation dynamique des noeud I/O par rapport au type de calculs / patternes des applicaiton
 - repartire des applications sur plusieur reources pour maximisé l'utilisation de la bande passante.
 - Le changement de politique ce fait au démarrage ou au changement des applications (job) lancé. (pour déterminé le mailleur nb de I/O forwarding nodes)
 - 
 
-1. maximize la band passante en donnant des noeux de stockage au application qui vont mieux les utilisé. (et pas au applications qui accéde peut au données?).
+1. maximize la band passante en donnant des noeud de stockage au application qui vont mieux les utilisé. (et pas au applications qui accéde peut au données?).
 
 propose : (user-level + portable + don't edit apps => solution utile)
 - user-level i/o solution
 - on demand
 - applique différante politique d'allocation a l'execution (dynamique)
-- changer le nombre de noeux I/O à l'execution sans perturbé l'app
+- changer le nombre de noeud I/O à l'execution sans perturbé l'app
 -
 
 \section{The problem}
 % - a vision of the problem being treated (types of tasks and resources, objective function, constraints, etc), if possible;
 
+%TODO: on a vure plus haut que l'allocation statique amené a une mauvaise utilisation des resources car...
 
 Le pb :
 - la connection entre les NInt et les Ncal est statique
-- Donc l'application peut utilisé qu'un nombre prédéfinis de noeux I/O est communique avec un seul NInt.
+- Donc l'application peut utilisé qu'un nombre prédéfinis de noeud I/O est communique avec un seul NInt.
 - pas assé flexible
 - ça peut amené a de mauvaise allocation des resources (Yu et al. [8] Bez et al. [9])
-- La bande passant est déterminé par le fonctionnement des applications (plus ou moins de calcule avec plus ou moins d'accés au données...) ce qui fait qu'avec un nombre statique de noeux ou peut ce retouvé à avoir top de noeux I/O et donc une bande passant pas utilisé a sont pliens potenciel. (caractéristiques de la charge de travail / accès I/O).
+- La bande passant est déterminé par le fonctionnement des applications (plus ou moins de calcule avec plus ou moins d'accés au données...) ce qui fait qu'avec un nombre statique de noeud ou peut ce retouvé à avoir top de noeud I/O et donc une bande passant pas utilisé a sont pliens potenciel. (caractéristiques de la charge de travail / accès I/O).
 - 
 
 - pas facile de changer la strategies sans avoir un mauvé impacte car statique
 
 Il on en premier regardé que toutes les applications n'on pas les même perf avec le même nombre de I/O nodes. Il on vue que certain patternes on besoin de plus de I/O nodes et d'autre moins. Donc il on montré qu'une allocation statique c'est null.
 
-Pour un ensemble de tâches à exécuter et un nombre fixe de de nœuds I/O il faut déterminé le nombre de noeux I/O forwarding qui maximise l'utilisation de la bande passante globale. Ce probléme dois étre considered as an optimization problem.
+Pour un ensemble de tâches à exécuter et un nombre fixe de de nœuds I/O il faut déterminé le nombre de noeud I/O forwarding qui maximise l'utilisation de la bande passante globale. Ce probléme dois étre considered as an optimization problem.
 
 MCKP :
+- Ce problem cherche à maximisé la bandpassat global en donnant plus de noeud I/O au applications qui en on le plus besoin.
 - un problème d'optimisation
 - derived from the 0-1 Knapsack
 - items divide in $k$ classes of $N_i$ items
@@ -150,7 +130,7 @@ $card(C_1) = 3 = N_1, card(C_2) = 3 = N_2$
 
 
 compute nodes must be derived by the number of I/O nodes.
-on est limité par le nombre total de noeux I/O.
+on est limité par le nombre total de noeud I/O.
 
 Il on fait des traces pour connaitre les access patterns (total data volum, nb processes makeing I/O requests...)
 
@@ -173,16 +153,16 @@ La band passante de chaque groupe est calculé par la somme de toutes les (Write
 \section{Explication des algo}
 % - an explanation of the algorithms;
 Gekkofwd :
-- politique d'allocation de noeux I/O.
+- politique d'allocation de noeud I/O.
 - 
 
 GekkoFS :
-- Un system de fichier local au noeux de calcule
+- Un system de fichier local au noeud de calcule
 - Un \emph{burst-buffer} qui est un buffer qui ce met entre l'app et le FS pour amélioré les perfs. Ce gain de perf est obtenu car il augmente l'utilisation de la band passante (en permettant le stockage de données en même temps que le calcule) et permet d'attenué la charge sur le PFS quant il y à un peaks de demande.
-- Fourni un system de nom qui est partagé entre tous les noeux de calcule. Ce mecanisme peut être remplacé par un PFS (grâce au mode d'extension GekkoFWD).
+- Fourni un system de nom qui est partagé entre tous les noeud de calcule. Ce mecanisme peut être remplacé par un PFS (grâce au mode d'extension GekkoFWD).
 - 
 
-Grâce à GekkoFWD, GekkoFS est utilisé comme un noeux intermédiaires entre le noeux de calcule et le noeux I/O.
+Grâce à GekkoFWD, GekkoFS est utilisé comme un noeud intermédiaires entre le noeud de calcule et le noeud I/O.
 
 Pour capturé les requêtes de l'app au PFS de façon transparent GekkoFS utilise intércepte les appéles system.
 
@@ -197,7 +177,7 @@ AGIOS :
 
 AGIOS permet à GekkoFWD d'utilisé différant ordonanceur.
 
-Quand un noeux I/O resoive les requêtes il les envoi à AGIOS pour ordonancé le moment ou elle seront traité.
+Quand un noeud I/O resoive les requêtes il les envoi à AGIOS pour ordonancé le moment ou elle seront traité.
 
 Une fois fini tous est envoyer au PFS.
 
@@ -210,7 +190,7 @@ Pour les perfs du début ils on :
 - fait plusieurs lancement
 - exec sur MareNostrum 4 (MN4) supercomputer
 - avec différante configuration de forwarding
-- avec différant nombre de noeux I/O
+- avec différant nombre de noeud I/O
 - pour voir différants patterns
 - utilise un outil FORGE (I/OForwarding Explorer) pour relancer le profiles I/O des app
 - il décrive les machines de MN4
@@ -223,7 +203,7 @@ Politiques avec les quelle il ce sont comparer :
 - \emph{ORACLE Policy}
 
 
-Ils on fait les expérimentations sur la platform Grid 5000 (G5K) avec 2 cluster à Nancy : Grimoire (8 noeux) et Gros (124 noeux). % conf
+Ils on fait les expérimentations sur la platform Grid 5000 (G5K) avec 2 cluster à Nancy : Grimoire (8 noeud) et Gros (124 noeud). % conf
 
 5 différants app kernels + les micro-benchmark IOR :
 1. S3D I/O Kernel
@@ -232,7 +212,7 @@ Ils on fait les expérimentations sur la platform Grid 5000 (G5K) avec 2 cluster
 4. S3aSim
 5. NAS BT-IO
 
-Ils on mesuré la band passant pour chaque applications et il confirm les résultat de FORGE. Ils ont fait ce test avec des nombre de noeux et des nombre de processus différant.
+Ils on mesuré la band passant pour chaque applications et il confirm les résultat de FORGE. Ils ont fait ce test avec des nombre de noeud et des nombre de processus différant.
 
 set of jobs composed of BT-C, BT-D, IOR-MPI, POSIX-L, MAD, and S3D to test dynamically changing the allocated I/O nodes
 
@@ -257,3 +237,40 @@ La \emph{contention} : forte tentions sur un serveur (beaucoup de demandes).
 \end{document}
 
 % TODO: up to 8 pages
+
+%L'article s'intéresse à différante politique d'accés au noeud de données en fonction des patternes d'accès au données par l'applicaiton.
+
+% L'article propose une politique basé sur le problème du sac à dos (Knapsack problem) à choix multiple. Ce problem cherche à maximisé la bandpassat global en donnant plus de noeud I/O au applications qui en on le plus besoin.
+
+%Le context de l'article est :
+%- Les applications HPC font de plus en plus d'accès au données nommé (I/O)
+%- Il y a pliens de type d'applicaitons (accès hétérogénéité aux données, IA, bigData)
+%- on augment le nombre de moeux de calculs pour avoir plus de performance mais le PFS ne peut pas scale pour autant de noeud. (je suppose une histoire de broadcast qui faut mettre en multicast?)
+%- le \emph{I/O forwarding} cherche a corriger le problème en diminuent le nombre de machine qui accéde au PFS.
+
+% NInt : noeud interface
+% Ncal : noeud de calcule
+
+% Le \emph{I/O forwarding} consiste à une groupe de noeud qui resoive les requétes de
+% l'applicaiton et les transmet au system de fichier paralléle. Permet aussi de changer la form
+% des requétes (Ex : au lieu de plusieurs petite requétes on en fait une seul grand).
+
+% Le \emph{I/O forwarding} :
+% - une technique très utilisé dans le HPC
+% - Cette technique permet d'augmenté les performances
+% - évite les accès direct au machine de stockage parallèle
+% - NInt ce met entre les noeud de calcule et les noeud PFS
+% - Ajouté des Nint permet de controlé les demand d'accès au données et d'appliqué des théchniques d'optimisation
+% - c'est transparent pour les utilisateurs (app, FS...)
+% - diminuent la contention à accès au serveurs de stockage de données.
+% - try to répatition uniform ?
+% - utilisé par des machine du top 500
+
+
+% les théchniques d'optimisation :
+% - la planification des demandes
+% - l'agrégation des demandes.
+
+% La technique habituelle est d'assigné statiquement un noeud de stockage à un noeud de calcule.
+% Ces liens ce correspond pas tous le temps au transfére de données d'on l'appication à besoin.
+
