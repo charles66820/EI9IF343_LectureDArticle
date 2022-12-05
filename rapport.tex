@@ -30,36 +30,29 @@
 
 
 \section{L'objectif de l'article}
-% TODO: the objective of the paper;
 
-% truc dynamique
-
-L'objectif de l'article est d'amélioré l'utilisation de la bande passante entre les noeud de calcule et les \emph{noeud des stockage des données}, que j'appailerai \emph{noeud I/O} dans le reste des ce rapport. Plus présisément l'objectif est permettre le changement dynamique des politiques d'accés aux \emph{noeud I/O}. Pour cela l'article propose :
+L'objectif de l'article est d'améliorer l'utilisation de la bande passante entre \emph{les noeuds de calculs} et les \emph{noeuds de stockage des données}, que j'appellerai \emph{noeud I/O} dans le reste de ce rapport. Plus précisément, l'objectif est de permettre le changement dynamique des politiques d'accès aux \emph{noeud I/O}. Pour cela, l'article propose :
 \begin{itemize}
-  \item une implémentation qui permet ce changement en fontion des patterns d'accé
+  \item une implémentation qui permet ce changement en fonction des patterns d'accès aux \emph{noeuds I/O}.
   \item ainsi qu'une politique basé sur le problème du sac à dos à choix multiple \emph{Multiple-Choice Knapsack problem}.
 \end{itemize}
 
-Il propose aussi une solution qui permet d'utilisé, à la demande, au niveaux utilisateur et
-pandent l'execution, différentes politiques de \emph{I/O forwarding}.
+Il propose aussi une solution qui permet d'utiliser dynamiquement différentes politiques d'allocation de \emph{noeuds I/O forwarding}.
 
-Il montre que leur technique augment de façon transparent l'utilisation de la bande passante
-globale jusque'à 85\% par rapport a la politique statique utilisé par défault. Il le montre
-avec de nombreuse expérimentations et directement sur une infrastructure (live setup).
 \section{Le context de l'article}
-% - its scientific context or the background to understand the work;
 
-Cette article ce place dans le contexte ou les supercalculateur font de plus en plus d'accès au données. Cette augmentation est du à plusieurs facteurs comme :
+Cet article se place dans le contexte ou les supercalculateurs font de plus en
+plus d'accès aux données. Cette augmentation est due à plusieurs facteurs comme :
 \begin{itemize}
-  \item l'augmentation de la puissance de calcule
-  \item l'augmentation des quantités de données a traité
-  \item la variété des type d'applications à accès hétérogénéité aux données, l'intéligence artificiel, le bigData\dots
+  \item l'augmentation de la puissance de calcul.
+  \item l'augmentation des quantités de données a traité.
+  \item la variété des types d'applications à accès hétérogénéité aux données, l'intelligence artificielle, le bigData\dots
 \end{itemize}
-Pour répondre au besoin de pussiance croissante on augmente le nombre de noeud de calcule ce qui à pour effét d'aumenté le nombre de requêtes système de fichier parallèle (\emph{PFS}). Ce système fini par ne plus pouvoir traité autent de requêtes car tous les \emph{noeud I/O} ce retouve saturé. Pour réglé ce problème les \emph{PFS} utilise la technique du \emph{I/O forwarding} qui diminue le nombre de noeud du \emph{PFS} accessible par les noeud de calcule.
+Pour répondre au besoin de puissance croissante, on augmente le nombre de \emph{noeuds de calculs} ce qui a pour effet d'augmenter le nombre de requêtes système de fichier parallèle (\emph{PFS}). Ce système fini par ne plus pouvoir traité autant de requêtes, car tous les \emph{noeuds I/O} se retrouvent saturés. Pour réglé ce problème les \emph{PFS} utilise la technique du \emph{I/O forwarding} qui diminue le nombre de noeuds du \emph{PFS} accessible par \emph{les noeuds de calcul}.
 
 \subsection{La technique du \emph{I/O forwarding}}
 
-Cette technique est très utilisé pour le calcul haut performance, notamment par des machine du top 500\cite{}. Elle permet d'augmenté les performances global en diminuent la concentration des requêtes sur les \emph{noeud I/O}. Pour cela elle évite les accès direct aux \emph{noeud I/O} en ce placent entre les noeud de calcule et les \emph{noeud I/O}. Concrètement un groupe de \emph{noeud I/O} recevoir les requêtes et applique des traitement avant de les transmet au bon \emph{noeud I/O}. Ce technique est transparent pour les utilisateurs, elle cherche à appliqué une répartition uniforme entre les noeud et permet le controlle des demandes d'accès au données ce qui permet l'application de technique d'optimisation. Ce techniques peuvent être de différentes nature comme l'agrégation des requêtes (en combinent plusieurs petite requêtes) ou la planification des requêtes.
+Cette technique est très utilisé pour le calcul haut performance, notamment par des machine du top 500\cite{}. Elle permet d'augmenté les performances global en diminuent la concentration des requêtes sur les \emph{noeud I/O}. Pour cela elle évite les accès direct aux \emph{noeud I/O} en ce placent entre \emph{les noeud de calcule} et les \emph{noeud I/O}. Concrètement un groupe de \emph{noeud I/O} recevoir les requêtes et applique des traitement avant de les transmet au bon \emph{noeud I/O}. Ce technique est transparent pour les utilisateurs, elle cherche à appliqué une répartition uniforme entre les noeud et permet le controlle des demandes d'accès au données ce qui permet l'application de technique d'optimisation. Ce techniques peuvent être de différentes nature comme l'agrégation des requêtes (en combinent plusieurs petite requêtes) ou la planification des requêtes.
 
 Habituellement les \emph{noeud I/O} qui s'occupe de la réception des requêtes sont assigné statiquement à un noeud de calcule et celle-ci peut dépendre de la topologie du réseau, du nombre de \emph{noeud I/O}\dots Cette assignation ne correspond pas tous les temps au besoin de l'application qui peut ne pas utilisé toute la bande passant ou être ralentie par celle-ci. L'assignation statiquement amène donc à une mauvaise utilisation des resources. Dans la suite du rapport j'appelerai les \emph{noeud I/O} qui s'occupe de la réception les \emph{noeud I/O Forwarding}.
 
@@ -142,11 +135,11 @@ Ce service est basé sur \emph{GekkoFS} qui est une système de fichier local à
 
 \subsubsection{\emph{GekkoFS}}
 
-\emph{GekkoFS} est un système de fichiers local qui est exécuter sur les noeud de calcule. Ce système est utilisé comme un \emph{burst-buffer}. Comme sont nom l'indique c'est un buffer qui ce met entre l'application et le \emph{PFS} dans le but d'amélioré la performances des accès \emph{I/O}. Cette amélioration est en partie du à la diminution de la charge sur le \emph{PFS} quant il y a un pics de demande.
+\emph{GekkoFS} est un système de fichiers local qui est exécuter sur \emph{les noeud de calcule}. Ce système est utilisé comme un \emph{burst-buffer}. Comme sont nom l'indique c'est un buffer qui ce met entre l'application et le \emph{PFS} dans le but d'amélioré la performances des accès \emph{I/O}. Cette amélioration est en partie du à la diminution de la charge sur le \emph{PFS} quant il y a un pics de demande.
 
 Ce système permet aussi l'execution des requêtes \emph{I/O en parallèle} de l'execution du calcule, ce qui permet d'augmente l'utilisation de la band passante.
 
-Il fourni aussi un système de nom qui est partagé entre tous les noeud de calcule. Ce mécanisme peut être remplacé par un \emph{PFS}.
+Il fourni aussi un système de nom qui est partagé entre tous \emph{les noeud de calcule}. Ce mécanisme peut être remplacé par un \emph{PFS}.
 
 \subsubsection{Application de technique d'optimisation (\emph{AGIOS})}
 
@@ -155,7 +148,7 @@ Il fourni aussi un système de nom qui est partagé entre tous les noeud de calc
 
 \section{Algorithme}
 
-Grâce à \emph{GekkoFWD}, \emph{GekkoFS} est utilisé comme un noeud intermédiaires entre les noeud de calcule et les \emph{noeud I/O}. Pour cela \emph{GekkoFS} capture les requêtes que fait l'application au \emph{PFS}. Cette capture est transparent et ce fait en interceptant les appéles système. Une fois les requêtes capturé \emph{GekkoFWD} transfére les requêtes à un seul serveur qui vas les passé à \emph{AGIOS} pour ordonancé le moment ou elle seront traité. Grâce au requêtes il est possible de determiné quelle politique d'allocation appliqué.
+Grâce à \emph{GekkoFWD}, \emph{GekkoFS} est utilisé comme un noeud intermédiaires entre \emph{les noeud de calcule} et les \emph{noeud I/O}. Pour cela \emph{GekkoFS} capture les requêtes que fait l'application au \emph{PFS}. Cette capture est transparent et ce fait en interceptant les appéles système. Une fois les requêtes capturé \emph{GekkoFWD} transfére les requêtes à un seul serveur qui vas les passé à \emph{AGIOS} pour ordonancé le moment ou elle seront traité. Grâce au requêtes il est possible de determiné quelle politique d'allocation appliqué.
 
 Pour savoir quant le mappage à changer on ajoute un thread grâce à \emph{GekkoFS}.
 
@@ -210,7 +203,7 @@ Le papier plaide pour :
 
 % TODO: up to 8 pages
 
-%L'article s'intéresse à différente politique d'accés au noeud de données en fonction des patternes d'accès au données par l'application.
+%L'article s'intéresse à différente politique d'accès au noeud de données en fonction des patternes d'accès au données par l'application.
 
 % L'article propose une politique basé sur le problème du sac à dos (Knapsack problem) à choix multiple. Ce problem cherche à maximisé la bandpassat global en donnant plus de noeud I/O au applications qui en on le plus besoin.
 
@@ -251,7 +244,7 @@ Le papier plaide pour :
 % - Donc l'application peut utilisé qu'un nombre prédéfinis de noeud I/O est communique avec un seul NInt.
 % - pas assé flexible
 % - ça peut amené a de mauvaise allocation des resources (Yu et al. [8] Bez et al. [9])
-% - La bande passant est déterminé par le fonctionnement des applications (plus ou moins de calcule avec plus ou moins d'accés au données...) ce qui fait qu'avec un nombre statique de noeud ou peut ce retouvé à avoir top de noeud I/O et donc une bande passant pas utilisé a sont pliens potenciel. (caractéristiques de la charge de travail / accès I/O).
+% - La bande passant est déterminé par le fonctionnement des applications (plus ou moins de calcule avec plus ou moins d'accès au données...) ce qui fait qu'avec un nombre statique de noeud ou peut ce retouvé à avoir top de noeud I/O et donc une bande passant pas utilisé a sont pliens potenciel. (caractéristiques de la charge de travail / accès I/O).
 
 % Pour les perfs du début ils on :
 % - fait plusieurs lancement
