@@ -73,21 +73,22 @@ Dans l'article, ils ont commencé par évaluer les politiques d'allocation suiva
 \begin{itemize}
   \item \emph{ZERO and ONE Policies} chaque application à 0 ou un \noeudIO{} alloué.
   \item \emph{STATIC Policy} le nombre de \noeudsIO est déterminé par rapport au nombre de \noeudsDeCalculs{}.
-  \item \emph{SIZE and PROCESS Policies} le nombre de \emph{noeuds I/O} est réparti proportionnellement entre les applications par rapport à leur nombre de \noeudsDeCalculs{} ou leur nombre de processus.
-  \item \emph{ORACLE Policy} chaque application se voit allouer un nombre de \emph{noeuds I/O} qui maximise l'utilisation de la bande passante. Cette allocation est déterminée par une évaluation des performances.
+  \item \emph{SIZE and PROCESS Policies} le nombre de \noeudsIO est réparti proportionnellement entre les applications par rapport à leur nombre de \noeudsDeCalculs{} ou leur nombre de processus.
+  \item \emph{ORACLE Policy} chaque application se voit allouer un nombre de \noeudsIO qui maximise l'utilisation de la bande passante. Cette allocation est déterminée par une évaluation des performances.
 \end{itemize}
 
-Il on effectué ces évaluations en faisant plusieurs lancements avec différent nombre de \emph{noeud I/O}, différentes politiques d'allocation et avec différentes applications pour avoir différent patterns d'accès au PFS. Ces évaluations on été effectué sur le supercalculateur MareNostrum 4 (MN4) en utilisent un outil appelé FORGE (I/O \textbf{For}wardin\textbf{g E}xplorer) qui permet de re-lancer les profiles I/O des applications.
+Ils ont effectué ces évaluations en faisant plusieurs lancements avec différents nombres de \noeudsIO, différentes politiques d'allocation et avec différentes applications pour avoir différents patterns d'accès au \emph{PFS}. Ces évaluations, ont été effectuées sur le supercalculateur \emph{MareNostrum 4} (\emph{MN4}) en utilisant un outil appelé FORGE (I/O \textbf{For}wardin\textbf{g E}xplorer) qui permet de relancer les profils \emph{I/O} des applications.
 
-Pour obtenir les résultats ils ont fait des traces pour connaître les patterns d'accès des application au \emph{PFS}. Ils ont collecté le volume total des données transféré et le nombre de processes qui font des requêtes \emph{I/O}. Avec c'est traces ils on créer des petit benchmark pour reproduire les c'est patterns d'accès et faire des teste de performances.
+Pour obtenir les résultats, ils ont fait des traces pour connaître les patterns d'accès des applications au \emph{PFS}. Ils ont collecté le volume total des données transféré et le nombre de processus qui font des requêtes \emph{I/O}. Avec ces traces, ils ont créé des petits benchmarks pour reproduire les patterns d'accès et faire des tests de performance.
 
-Ils non pas eu besoin de profiling car ont s'intéresse qu'aux politiques d'allocation.
+Ils n'ont pas eu besoin de faire de profiling, car ils ne s'intéressent qu'aux politiques d'allocation.
 
-Ils ont éxécuté 189 patterns sur la machine MN4 et il ont fair des group de 16 patterns pour simulé chaque politique (Un pattern représente une application).
-Ils ont donc généré 10 000 groupe de 16 patterns qui prènne le même temps d'exécution.
-Ils ont utilisé jusqu'à 128 \emph{noeud I/O forwarding}, 8 par application ($128/16=8$). Avec un nombre de \noeudsDeCalculs{} entre 88 et 512 et une median de 256.
+Ils ont exécuté 189 patterns sur la machine \emph{MN4} et ils ont fait des groupes de 16 patterns pour simuler chaque politique (Un pattern représente une application).
+Ils ont donc généré 10 000 groupes de 16 patterns qui prennent le même temps d'exécution.
+Ils ont utilisé jusqu'à 128 \emph{noeuds I/O forwarding}, 8 par application ($128/16=8$). Avec un nombre de \noeudsDeCalculs{} entre 88 et 512 et une médiane de 256.
 
-La band passante de chaque groupe est calculé par la somme de toutes les (WriteSize + ReadSize / runningTime)
+La bande passante de chaque groupe est calculée par la somme des nombre d'écriture plus le nombre de lecture le tout divisé par le temps d'exécution. ($(nbÉcriture + nbLecture) / tempsDExécution$).
+% W = Write, R = Read, runtime = runningTime
 \begin{equation*}aggregate\ BW=\sum_{a=1}^{16}\left(\frac{W_{a}+R_{a}}{runtime_{a}}\right) \tag{2}\end{equation*}
 
 Grâce à cette évaluations on vois qu'il est possible d'amélioré l'utilisation de la band passante.
