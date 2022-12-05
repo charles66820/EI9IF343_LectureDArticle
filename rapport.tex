@@ -85,14 +85,21 @@ Dans l'article ils on commancé par évalué les politiques d'allocation suivant
   \item \emph{ORACLE Policy} chaque application ce vois alloué un nombre de \emph{noeud I/O} qui maximise l'utilisation de la band passant. Cette allocation est déterminé par une évaluations des performances.
 \end{itemize}
 
-Il on effectué ces évaluations en faisant plusieurs lancements avec différent nombre de \emph{noeud I/O}, différentes politiques d'allocation et avec différentes applications pour avoir différent patterns d'accès au PFS. Ces évaluations on été effectué sur le supercalculateur MareNostrum 4 (MN4) en utilisent un outil appelé FORGE (I/O \textbf{For}wardin\textbf{g E}xplorer) qui petmet de re-lancer les profiles I/O des applications.
+Il on effectué ces évaluations en faisant plusieurs lancements avec différent nombre de \emph{noeud I/O}, différentes politiques d'allocation et avec différentes applications pour avoir différent patterns d'accès au PFS. Ces évaluations on été effectué sur le supercalculateur MareNostrum 4 (MN4) en utilisent un outil appelé FORGE (I/O \textbf{For}wardin\textbf{g E}xplorer) qui permet de re-lancer les profiles I/O des applications.
+
+Pour obtenir les résultats ils ont fait des traces pour connaître les patterns d'accès des application au \emph{PFS}. Ils ont collecté le volume total des données transféré et le nombre de processes qui font des requêtes \emph{I/O}. Avec c'est traces ils on créer des petit benchmark pour reproduire les c'est patterns d'accès et faire des teste de performances.
+
+Ils non pas eu besoin de profiling car ont s'intéresse qu'aux politiques d'allocation.
+
+Ils ont éxécuté 189 patterns sur la machine MN4 et il ont fair des group de 16 patterns pour simulé chaque politique (Un pattern représente une application).
+Ils ont donc généré 10 000 groupe de 16 patterns qui prènne le même temps d'execution.
+Ils ont utilisé jusqu'à 128 \emph{noeud I/O forwarding}, 8 par application ($128/16=8$). Avec un nombre de noeud de calcule entre 88 et 512 et une median de 256.
+
+La band passante de chaque groupe est calculé par la somme de toutes les (WriteSize + ReadSize / runningTime)
+\begin{equation*}aggregate\ BW=\sum_{a=1}^{16}\left(\frac{W_{a}+R_{a}}{runtime_{a}}\right) \tag{2}\end{equation*}
 
 Grâce à cette évaluations on vois qu'il est possible d'amélioré l'utilisation de la band passante.
 Ils ont aussi vue que toutes les applications n'on pas les même performances avec le même nombre de \emph{noeud I/O}. Cette différence existe car chaque applications a un patterns d'accès aux \emph{PFS} différent. Ils ont remarqué que certain applications avait des patterns similaire.
-
-\subsection{TO_NAME}
-
-Les auteurs onr fait des traces pour connaître les patterns d'accès des application au \emph{PFS}. Il on collecté le volume total des données transféré et le nombre de processes qui font des requêtes \emph{I/O}. Avec c'est traces ils on créer des petit benchmark pour reproduire les c'est patterns d'accès et faire des teste de performances.
 
 \section{Propositions de l'article}
 
@@ -153,40 +160,8 @@ Grâce à \emph{GekkoFWD}, \emph{GekkoFS} est utilisé comme un noeud intermédi
 Pour savoir quant le mappage à changer on ajoute un thread grâce à \emph{GekkoFS}.
 
 
-
-TODO: continue here
-
-Le papier parle de :
-- regarde plusieurs politique de répartition des resources en fonction des patternes d'accées au données.
-- comparé différent patterns d'accées pour mieux voir les benefices et désavantages
-
-Le papier plaide pour :
-- allocation dynamique des noeud I/O par rapport au type de calculs / patternes des application
-- repartire des applications sur plusieur reources pour maximisé l'utilisation de la bande passante.
-- Le changement de politique ce fait au démarrage ou au changement des applications (job) lancé. (pour déterminé le mailleur nb de I/O forwarding nodes)
-
-1. maximize la band passante en donnant des noeud de stockage au application qui vont mieux les utilisé. (et pas au applications qui accéde peut au données?).
-
 \section{Les performances}
 
-% NOTE: perfs :
-
-
-Pas besoin de profiling car on regarde juste les politique d'allocation.
-
-Ils executé 189 patterns sur la machine MN4.
-Ils on fait des groupe de 16 pour simulé chaque politique.
-
-1 pattern = one app for this test.
-
-Il on généré 10 000 groupe de 16 pattern qui prènne le même temps d'execution.
-Jusque à 128 I/O forwarding nodes. (128 / 16app = 8 by app)
-Number of compute nodes : median 256, minimum 88, maximum 512.
-
-La band passante de chaque groupe est calculé par la somme de toutes les (WriteSize + ReadSize / runningTime)
-\begin{equation*}aggregate\ BW=\sum_{a=1}^{16}\left(\frac{W_{a}+R_{a}}{runtime_{a}}\right) \tag{2}\end{equation*}
-
-\section{Le perfs}
 % - commentary regarding the performance evaluation, if present;
 
 Il on un gain global d'utilisation de la band passante jusqu'à 85\% par rapport à la politique statique de base.
@@ -219,6 +194,24 @@ TODO: 5.2. Allocation Decisions
 
 TODO: SECTION 6.
 
+\section{Check / Add}
+
+TODO:
+
+Le papier parle de :
+- regarde plusieurs politique de répartition des resources en fonction des patternes d'accées au données.
+- comparé différent patterns d'accées pour mieux voir les benefices et désavantages
+
+Le papier plaide pour :
+- allocation dynamique des noeud I/O par rapport au type de calculs / patternes des application
+- repartire des applications sur plusieur reources pour maximisé l'utilisation de la bande passante.
+- Le changement de politique ce fait au démarrage ou au changement des applications (job) lancé. (pour déterminé le mailleur nb de I/O forwarding nodes)
+
+1. maximize la band passante en donnant des noeud de stockage au application qui vont mieux les utilisé. (et pas au applications qui accéde peut au données?).
+
+% load all bibliographies
+\bibliography{biblio}
+\nocite{*}
 
 \end{document}
 
@@ -281,6 +274,21 @@ TODO: SECTION 6.
 % - \emph{STATIC Policy}
 % - \emph{SIZE and PROCESS Policies}
 % - \emph{ORACLE Policy}
+
+
+% Pas besoin de profiling car on regarde juste les politique d'allocation.
+
+% Ils executé 189 patterns sur la machine MN4.
+% Ils on fait des groupe de 16 pour simulé chaque politique.
+
+% 1 pattern = one app for this test.
+
+% Il on généré 10 000 groupe de 16 pattern qui prènne le même temps d'execution.
+% Jusque à 128 I/O forwarding nodes. (128 / 16app = 8 by app)
+% Number of compute nodes : median 256, minimum 88, maximum 512.
+
+% La band passante de chaque groupe est calculé par la somme de toutes les (WriteSize + ReadSize / runningTime)
+% \begin{equation*}aggregate\ BW=\sum_{a=1}^{16}\left(\frac{W_{a}+R_{a}}{runtime_{a}}\right) \tag{2}\end{equation*}
 
 % - pas facile de changer la strategies sans avoir un mauvé impacte car statique
 
