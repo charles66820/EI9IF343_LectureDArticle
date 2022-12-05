@@ -173,31 +173,19 @@ Il constate bien que les accès statiques ne sont pas très efficaces sauf pour 
 Ils ont comparé différents scénarios pour montrer que leur implémentation fonctionne bien.
 
 \section{Les articles qu'il référence}
-% - information about other papers that reference it.
 
-Il existe :/
-
-TODO: SECTION 6.
-
-\section{Check / Add}
-
-TODO:
-
-Le papier parle de :
-- regarde plusieurs politiques de répartition des ressources en fonction des patterns d'accès aux données.
-- comparer différents patterns d'accès pour mieux voir les bénéfices et désavantages.
-
-Le papier plaide pour :
-- l'allocation dynamique des noeuds I/O par rapport au type de calculs / patterns des applications.
-- répartir des applications sur plusieurs ressources pour maximiser l'utilisation de la bande passante.
-- le changement de politique se fait au démarrage ou au changement des applications (job) lancées. (pour déterminer le meilleur nb de I/O forwarding nodes)
-
-1. maximize la bande passante en donnant des noeuds de stockage aux applications qui vont mieux les utiliser. (et pas aux applications qui accèdent peu aux données ?).
+Les articles référencés parlent de :
+\begin{itemize}
+  \item Tests de performance des différentes politiques d'allocation.
+  \item De l'optimisation.
+  \item Des gestions d'\emph{I/O} des supercalculateurs.
+  \item De \emph{I/O Forwarding} à la demande.
+  \item Du service \emph{GekkoFS}.
+  \item D'ordonnancement.
+\end{itemize}
 
 % load all bibliographies
 \bibliography{biblio}
 \nocite{*}
 
 \end{document}
-
-% TODO: up to 8 pages
